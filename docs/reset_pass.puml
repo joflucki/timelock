@@ -26,5 +26,5 @@ note over Server
   <math>"Verify"(M, Sig_c(M))</math>
 end note
 
-Server ->> Database: M
+Server ->> Database: <math>M</math>
 @enduml
