@@ -1,0 +1,30 @@
+@startuml
+participant Client
+participant Server
+database Database
+
+Client ->> Server: Request
+Server ->> Database: Request
+Database ->> Server: <math>E_{W_c}(S_c)</math>
+Server ->> Client: <math>E_{W_c}(S_c)</math>
+
+note over Client
+  <math>"hash" = H("pass")</math>
+end note
+
+note over Client
+  <math>W_c = HKDF("hash")</math>
+end note
+
+note over Client
+  <math>M = E_{W_c}(S_c)</math>
+end note
+
+Client ->> Server: <math>M || Sig_c(M)</math>
+
+note over Server
+  <math>"Verify"(M, Sig_c(M))</math>
+end note
+
+Server ->> Database: M
+@enduml

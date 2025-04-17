@@ -1,0 +1,10 @@
+@startuml
+participant Recipient
+participant Server
+database Database
+
+Recipient ->> Server: Request
+Server ->> Database: Request
+Database ->> Server: <math>E_{W_m}(E_{P_r}(M))</math>
+Server ->> Recipient: <math>E_{W_m}(E_{P_r}(M))</math>
+@enduml

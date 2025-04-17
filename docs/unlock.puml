@@ -1,0 +1,18 @@
+@startuml
+participant Recipient
+participant Server
+database Database
+
+Recipient ->> Server: Request
+
+Server ->> Database: Request
+Database ->> Server: <math>t</math>
+
+note over Server
+  <math>"Check "t</math>
+end note
+
+Server ->> Database: Request
+Database ->> Server: <math>E_{W_r}(S_r) || </math>
+Server ->> Recipient: <math>E_{W_r}(S_r) || </math>
+@enduml
