@@ -5,22 +5,15 @@ database Database
 
 Client ->> Server: Request
 Server ->> Database: Request
-Database ->> Server: <math>E_{W_t}(P_c) || U_r</math>
-Server ->> Client: <math>E_{W_t}(P_c) || U_r</math>
+Database ->> Server: <math>E_W_t(P_c) || U_r</math>
+Server ->> Client: <math>E_W_t(P_c) || U_r || U_s</math>
 
-note over Client
-  <math>D = E_{S_s}(I_c || I_r || t) || E_{P_r}(M)</math>
-end note
 
-Client ->> Server: <math>D || Sig_{c}(D)</math>
+Client ->> Server: <math>E_U_s(I_c || I_r || t || E_P_r(M))</math>
 
 note over Server
-  <math>"Verify"(D, Sig_s(D))</math>
+  <math>S_m</math>
 end note
 
-note over Server
-  <math>W_m</math>
-end note
-
-Server ->> Database: <math>I_c || I_r || t || E_{W_m}(E_{P_r}(M)) || W_m</math>
+Server ->> Database: <math>I_c || I_r || t || E_S_m(E_P_r(M)) || W_m</math>
 @enduml

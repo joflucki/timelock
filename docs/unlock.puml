@@ -13,6 +13,6 @@ note over Server
 end note
 
 Server ->> Database: Request
-Database ->> Server: <math>E_{W_r}(S_r) || </math>
-Server ->> Recipient: <math>E_{W_r}(S_r) || </math>
+Database ->> Server: <math>E_S_r(S_r) || </math>
+Server ->> Recipient: <math>E_S_r(S_r) || </math>
 @enduml
