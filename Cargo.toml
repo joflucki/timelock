@@ -1,7 +1,6 @@
-[package]
-name = "timelock"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-libsodium-sys-stable = "1.22.3"
+[workspace]
+members = [
+    "shared",
+    "client",
+    "server",
+]

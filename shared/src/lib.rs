@@ -2,6 +2,8 @@ pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
 
+pub fn some_shared_function() {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
