@@ -4,7 +4,7 @@ participant Server
 database Database
 
 note over Client
-  <math>S_c, P_c</math>
+  <math>"Pick asymmtric keys " P_c, U_c</math>
 end note
 
 note over Client
@@ -15,11 +15,7 @@ note over Client
   <math>W_c = HKDF("hash")</math>
 end note
 
-Client ->> Server: <math>I_c || P_c || E_W_c(S_c)</math>
+Client ->> Server: <math>I_c || P_c || E_W_c(P_c)</math>
 
-note over Server
-  How to verify public key wasn't spoofed? -> TLS
-end note
-
-Server ->> Database: <math>I_c || P_c || E_W_c(S_c)</math>
+Server ->> Database: <math>I_c || P_c || E_W_c(P_c)</math>
 @enduml

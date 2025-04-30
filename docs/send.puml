@@ -9,11 +9,11 @@ Database ->> Server: <math>E_W_t(P_c) || U_r</math>
 Server ->> Client: <math>E_W_t(P_c) || U_r || U_s</math>
 
 
-Client ->> Server: <math>E_U_s(I_c || I_r || t || E_P_r(M))</math>
+Client ->> Server: <math>E_U_s(I_c || I_r || t || E_U_r(M))</math>
 
 note over Server
-  <math>S_m</math>
+  <math>"Pick symmetric key " S_m</math>
 end note
 
-Server ->> Database: <math>I_c || I_r || t || E_S_m(E_P_r(M)) || W_m</math>
+Server ->> Database: <math>I_c || I_r || t || E_S_m(E_U_r(M)) || S_m</math>
 @enduml

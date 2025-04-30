@@ -9,13 +9,12 @@ Database ->> Server: <math>E_W_c(S_c)</math>
 Server ->> Client: <math>E_W_c(S_c) || U_s</math>
 
 note over Client
-  <math>"hash" = H("pass")</math>
+  Decrypt private key using old password
 end note
 
 note over Client
-  <math>W_c = HKDF("hash")</math>
+  Encrypt private key using new password
 end note
-
 
 Client ->> Server: <math>E_U_s(E_W_c(S_c))</math>
 

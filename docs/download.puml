@@ -5,6 +5,6 @@ database Database
 
 Recipient ->> Server: Request
 Server ->> Database: Request
-Database ->> Server: <math>E_S_m(E_P_r(M))</math>
-Server ->> Recipient: <math>E_S_m(E_P_r(M))</math>
+Database ->> Server: <math>E_S_m(E_U_r(M))</math>
+Server ->> Recipient: <math>E_S_m(E_U_r(M))</math>
 @enduml
