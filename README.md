@@ -11,6 +11,6 @@ Timelock is a secure, time-locked file sharing application built with Rust. It a
 
 The repository is structured as a Rust workspace containing the following crates:
 
-* `client`: Contains the command-line interface (CLI) or graphical user interface (GUI) for users to encrypt, send, and receive time-locked files.
+* `client`: Contains the terminal user interface (TUI) for users to encrypt, send, and receive time-locked files.
 * `server`: Implements the backend server responsible for storing and managing the encrypted files and associated metadata.
 * `shared`: Houses common code and data structures used by both the client and the server.
