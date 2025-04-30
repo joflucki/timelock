@@ -1,19 +1,25 @@
 mod messages;
+use libc::c_uchar;
 pub use messages::*;
 
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use libsodium_sys;
 
-pub fn some_shared_function() {}
+pub fn generate_keypair() -> (Vec<u8>, Vec<u8>) {
+    // Allocate memory for the public and secret keys
+    let mut pk: Vec<u8> = vec![0; 32]; // Public key size
+    let mut sk: Vec<u8> = vec![0; 32]; // Secret key size
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+    // Call the unsafe function to generate the key pair
+    unsafe {
+        let result = libsodium_sys::crypto_box_curve25519xchacha20poly1305_keypair(
+            pk.as_mut_ptr() as *mut c_uchar,
+            sk.as_mut_ptr() as *mut c_uchar,
+        );
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        if result != 0 {
+            panic!("Key pair generation failed");
+        }
     }
+
+    (pk, sk)
 }

@@ -1,4 +1,4 @@
-use shared::{some_shared_function, ClientRequest};
+use shared::ClientRequest;
 
 fn main() {
     println!("Server started");
