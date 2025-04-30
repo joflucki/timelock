@@ -5,7 +5,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/joflucki/timelock?color=purple)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/joflucki/timelock/test.yml?label=tests)
 
-Timelock is a secure, time-locked file sharing application built with Rust. It allows users to encrypt files and share them with recipients who can only decrypt them after a specified future date. This project is developed as part of a cryptography course.
+Timelock is a secure, time-locked file sharing application built with Rust. It allows users to encrypt files and share them with recipients who can only decrypt them after a specified future date.
 
 ## Project Structure
 
