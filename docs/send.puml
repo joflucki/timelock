@@ -8,8 +8,23 @@ Server ->> Database: Request
 Database ->> Server: <math>E_W_t(P_c) || U_r</math>
 Server ->> Client: <math>E_W_t(P_c) || U_r || U_s</math>
 
+note over Client
+  <math>S_s = "DH"(U_s, P_c)</math>
+end note
 
-Client ->> Server: <math>E_U_s(I_c || I_r || t || E_U_r(M))</math>
+note over Client
+  <math>S_r = "DH"(U_r, P_c)</math>
+end note
+
+Client ->> Server: <math>E_S_s(I_c || I_r || t || E_S_r(M) || \tau_1) || \tau_2</math>
+
+note over Server
+  <math>"Check " \tau_2</math>
+end note
+
+note over Server
+  <math>S_s = "DH"(U_c, P_s)</math>
+end note
 
 note over Server
   <math>"Pick symmetric key " S_m</math>
