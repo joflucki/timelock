@@ -1,0 +1,33 @@
+@startuml
+title Key structure
+
+rectangle "Password" as P
+rectangle "Password Hash" as PH
+rectangle "Derived Key" as K
+rectangle "Shared Key" as SK
+rectangle "Private Key" as PK
+rectangle "Encrypted Private Key" as EPK
+rectangle "Public Key of Server/Recipient" as UK
+
+
+circle "Hash()" as H
+circle "HKDF()" as KDF
+circle "Diffie-Hellman()" as DH
+circle "Encrypt()" as E
+
+
+P -> H
+H -> PH 
+PH -> KDF
+KDF -> K
+
+
+K --> E
+PK -> E
+E -> EPK
+
+UK -> DH
+PK --> DH
+DH -> SK
+
+@enduml

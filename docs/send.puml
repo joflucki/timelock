@@ -1,4 +1,5 @@
 @startuml
+title Send message
 participant Client
 participant Server
 database Database

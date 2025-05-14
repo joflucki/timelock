@@ -1,4 +1,5 @@
 @startuml
+title Unlock message
 participant Recipient
 participant Server
 database Database
