@@ -3,32 +3,48 @@ participant Client
 participant Server
 database Database
 
-Client ->> Server: Request
+note over Client
+  Retrieve keys
+end note
+
+Client ->> Server: <math>I_r || I_c || \tau</math>
+
 Server ->> Database: Request
-Database ->> Server: <math>E_W_t(P_c) || U_r</math>
-Server ->> Client: <math>E_W_t(P_c) || U_r || U_s</math>
+Database ->> Server: <math>U_r || U_c</math>
 
-note over Client
-  <math>S_s = "DH"(U_s, P_c)</math>
+note over Server
+  <math>S_{cs} = "DH"(U_c, P_s)</math>
 end note
 
-note over Client
-  <math>S_r = "DH"(U_r, P_c)</math>
+note over Server
+  <math>"Check " \tau</math>
 end note
 
-Client ->> Server: <math>E_S_s(I_c || I_r || t || E_S_r(M) || \tau_1) || \tau_2</math>
+Server ->> Client: <math>U_r || \tau</math>
+
+note over Client
+  <math>"Check "\tau</math>
+end note
+
+
+note over Client
+  <math>S_{cr} = "DH"(U_r, P_c)</math>
+end note
+
+Client ->> Server: <math>E_{S_{cs}}(I_c || I_r || t || E_{S_{cr}}(M) || \tau_1) || \tau_2</math>
+
+note over Server
+  <math>\cdots = D_{S_{cs}}(E_{S_{cs}}(\cdots))</math>
+end note
 
 note over Server
   <math>"Check " \tau_2</math>
 end note
 
-note over Server
-  <math>S_s = "DH"(U_c, P_s)</math>
-end note
 
 note over Server
   <math>"Pick symmetric key " S_m</math>
 end note
 
-Server ->> Database: <math>I_c || I_r || t || E_S_m(E_S_r(M)) || S_m</math>
+Server ->> Database: <math>I_c || I_r || t || E_{S_m}(E_{S_{cr}}(M)) || \tau_1 || S_m</math>
 @enduml

@@ -15,7 +15,7 @@ note over Client
   <math>W_c = HKDF("hash")</math>
 end note
 
-Client ->> Server: <math>I_c || U_c || E_W_c(P_c)</math>
+Client ->> Server: <math>I_c || U_c || E_{W_c}(P_c)</math>
 
-Server ->> Database: <math>I_c || U_c || E_W_c(P_c)</math>
+Server ->> Database: <math>I_c || U_c || E_{W_c}(P_c)</math>
 @enduml

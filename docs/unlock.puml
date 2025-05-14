@@ -3,7 +3,21 @@ participant Recipient
 participant Server
 database Database
 
-Recipient ->> Server: Request
+note over Recipient
+  Retrieve keys
+end note
+
+Recipient ->> Server: <math>I_r || I_m || \tau</math>
+Server ->> Database: Request
+Database ->> Server: <math>U_r</math>
+
+note over Server
+  <math>S_{sr} = DH(U_r, P_s)</math>
+end note
+
+note over Server
+  <math>"Check "\tau</math>
+end note
 
 Server ->> Database: Request
 Database ->> Server: <math>t</math>
@@ -12,7 +26,31 @@ note over Server
   <math>"Check "t</math>
 end note
 
+
 Server ->> Database: Request
-Database ->> Server: <math>E_W_r(P_r) || E_U_r(M) </math>
-Server ->> Recipient: <math>E_W_r(P_r) || E_U_r(M) </math>
+Database ->> Server: <math>S_m || \tau_1</math>
+Server ->> Recipient: <math>E_{S_{sr}}(S_m || \tau_1) || \tau_2</math>
+
+
+note over Recipient
+  <math>"Check " \tau_2</math>
+end note
+
+note over Recipient
+  <math>S_m, \tau_1 = D_{S_{sr}}(E_{S_{sr}}(S_m||\tau_1))</math>
+end note
+
+note over Recipient
+  <math>E_{S_{cr}}(M) = D_{S_m}(E_{S_m}(E_{S_{cr}}(M)))</math>
+end note
+
+note over Recipient
+  <math>M = D_{S_{cr}}(E_{S_{cr}}(M))</math>
+end note
+
+note over Recipient
+  <math>"Check " \tau_1</math>
+end note
+
+
 @enduml
