@@ -20,6 +20,10 @@ note over Server
 end note
 
 Server ->> Database: Request
-Database ->> Server: <math>E_{S_m}(E_{S_{cr}}(M))</math>
-Server ->> Recipient: <math>E_{S_m}(E_{S_{cr}}(M))</math>
+Database ->> Server: <math>E_{S_m}^{k_3}(E_{S_{cr}}^{k_1}(M) || k_1 ) || k_3 </math>
+Server ->> Recipient: <math>E_{S_m}^{k_3}(E_{S_{cr}}^{k_1}(M) || k_1 ) || k_3 || \tau</math>
+
+note over Recipient
+  <math>"Check " \tau</math>
+end note
 @enduml

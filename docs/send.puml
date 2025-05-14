@@ -51,7 +51,7 @@ note over Server
 end note
 
 note over Server
-  <math>"Pick nonce " k_3</math>
+  <math>"Pick " k_3</math>
 end note
 
 Server ->> Database: <math>I_c || I_r || t || E_{S_m}^{k_3}(E_{S_{cr}}^{k_1}(M) || k_1 ) || k_3 ||  \tau_1 || S_m</math>

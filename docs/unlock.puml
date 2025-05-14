@@ -29,7 +29,12 @@ end note
 
 Server ->> Database: Request
 Database ->> Server: <math>S_m || \tau_1</math>
-Server ->> Recipient: <math>E_{S_{sr}}(S_m || \tau_1) || \tau_2</math>
+
+note over Server
+  <math>"Pick "k_1</math>
+end note
+
+Server ->> Recipient: <math>E_{S_{sr}}^{k_1}(S_m || \tau_1) || k_1 || \tau_2</math>
 
 
 note over Recipient
@@ -37,15 +42,15 @@ note over Recipient
 end note
 
 note over Recipient
-  <math>S_m, \tau_1 = D_{S_{sr}}(E_{S_{sr}}(S_m||\tau_1))</math>
+  <math>S_m, \tau_1 = D_{S_{sr}}^{k_1}(E_{S_{sr}}(S_m||\tau_1))</math>
 end note
 
 note over Recipient
-  <math>E_{S_{cr}}(M) = D_{S_m}(E_{S_m}(E_{S_{cr}}(M)))</math>
+  <math>E_{S_{cr}}^{k_2}(M), k_2 = D_{S_m}^{k_1}(E_{S_m}^{k_1}(E_{S_{cr}}^{k_2}(M)|| k_2))</math>
 end note
 
 note over Recipient
-  <math>M = D_{S_{cr}}(E_{S_{cr}}(M))</math>
+  <math>M = D_{S_{cr}}^{k_2}(E_{S_{cr}}^{k_2}(M))</math>
 end note
 
 note over Recipient
