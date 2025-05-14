@@ -31,10 +31,14 @@ note over Client
   <math>S_{cr} = "DH"(U_r, P_c)</math>
 end note
 
-Client ->> Server: <math>E_{S_{cs}}(I_c || I_r || t || E_{S_{cr}}(M) || \tau_1) || \tau_2</math>
+note over Client
+  <math>"Pick "k_1, k_2</math>
+end note
+
+Client ->> Server: <math>E_{S_{cs}}^{k_2}(I_c || I_r || t || E_{S_{cr}}^{k_1}(M) || \k_1 || \tau_1) || \k_2 || \tau_2</math>
 
 note over Server
-  <math>\cdots = D_{S_{cs}}(E_{S_{cs}}(\cdots))</math>
+  <math>\cdots = D_{S_{cs}}^{k_2}(E_{S_{cs}}^{k_2}(\cdots))</math>
 end note
 
 note over Server
@@ -46,5 +50,9 @@ note over Server
   <math>"Pick symmetric key " S_m</math>
 end note
 
-Server ->> Database: <math>I_c || I_r || t || E_{S_m}(E_{S_{cr}}(M)) || \tau_1 || S_m</math>
+note over Server
+  <math>"Pick nonce " k_3</math>
+end note
+
+Server ->> Database: <math>I_c || I_r || t || E_{S_m}^{k_3}(E_{S_{cr}}^{k_1}(M) || k_1 ) || k_3 ||  \tau_1 || S_m</math>
 @enduml
