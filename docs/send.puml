@@ -30,5 +30,5 @@ note over Server
   <math>"Pick symmetric key " S_m</math>
 end note
 
-Server ->> Database: <math>I_c || I_r || t || E_S_m(E_U_r(M)) || S_m</math>
+Server ->> Database: <math>I_c || I_r || t || E_S_m(E_S_r(M)) || S_m</math>
 @enduml
