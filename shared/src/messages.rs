@@ -1,5 +1,1 @@
-pub enum ClientRequest {
-    GetID,
-    GetMessages,
-    GetHello,
-}
+pub enum ClientRequest {}
