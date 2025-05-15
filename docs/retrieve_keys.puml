@@ -6,8 +6,13 @@ database Database
 
 Client ->> Server: Request
 Server ->> Database: Request
-Database ->> Server: <math>E_{W_c}^k(P_c) || k</math>
-Server ->> Client: <math>E_{W_c}^k(P_c) || k || U_s </math>
+Database ->> Server: <math>E_{W_c}^k(P_c) || U_c|| k</math>
+
+note over Server
+  <math>S_{cs} = DH(U_c, P_s)</math>
+end note
+
+Server ->> Client: <math>E_{W_c}^k(P_c) || k || U_s || \tau</math>
 
 note over Client
   <math>"hash" = H("pass")</math>
@@ -18,11 +23,15 @@ note over Client
 end note
 
 note over Client
-  <math>P_c = D_{W_c}^k(E_{W_c}(P_c))</math>
+  <math>P_c = D_{W_c}^k(E_{W_c}^k(P_c))</math>
 end note
 
 note over Client
   <math>S_{cs} = DH(P_c, U_s)</math>
+end note
+
+note over Client
+  <math>"Check "\tau</math>
 end note
 
 @enduml
