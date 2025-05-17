@@ -6,10 +6,10 @@ participant Server
 database Database
 
 note over Recipient
-  Retrieve keys
+<math>\tau = "MAC"_{S_{cs}}(I_r || I_m)</math>
 end note
 
-Recipient ->> Server: <math>I_r || I_m || \tau</math>
+Recipient ->> Server: <math>(I_r || I_m) || \tau</math>
 Server ->> Database: Request
 Database ->> Server: <math>U_r</math>
 
@@ -22,10 +22,15 @@ note over Server
 end note
 
 Server ->> Database: Request
-Database ->> Server: <math>E_{S_m}^{k_3}(E_{S_{cr}}^{k_1}(M) || k_1 ) || k_3 </math>
-Server ->> Recipient: <math>E_{S_m}^{k_3}(E_{S_{cr}}^{k_1}(M) || k_1 ) || k_3 || \tau</math>
+Database ->> Server: <math>U_c || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data"</math>
+Server ->> Recipient: <math>U_c || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data"</math>
 
 note over Recipient
-  <math>"Check " \tau</math>
+<math>S_{cr} = DH(U_c, P_r)</math>
 end note
+
+note over Recipient
+<math>"Check "\tau_"data"</math>
+end note
+
 @enduml

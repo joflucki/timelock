@@ -6,10 +6,10 @@ participant Server
 database Database
 
 note over Recipient
-  Retrieve keys
+  <math>\tau = "MAC"_{S_{cs}}(I_r)</math>
 end note
 
-Recipient ->> Server: <math>I_r || I_m || \tau</math>
+Recipient ->> Server: <math>I_r || \tau</math>
 Server ->> Database: Request
 Database ->> Server: <math>U_r</math>
 
@@ -23,10 +23,6 @@ end note
 
 Server ->> Database: Request
 Database ->> Server: <math>I_{m_1} || I_{m_2} || \cdots || I_{m_n} </math>
-Server ->> Recipient: <math>I_{m_1} || I_{m_2} || \cdots || I_{m_n} || \tau</math>
-
-note over Recipient
-  <math>"Check "\tau</math>
-end note
+Server ->> Recipient: <math>I_{m_1} || I_{m_2} || \cdots || I_{m_n}</math>
 
 @enduml

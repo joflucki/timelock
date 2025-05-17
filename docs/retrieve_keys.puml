@@ -12,7 +12,7 @@ note over Server
   <math>S_{cs} = DH(U_c, P_s)</math>
 end note
 
-Server ->> Client: <math>E_{W_c}^k(P_c) || k || U_s || \tau</math>
+Server ->> Client: <math>E_{W_c}^k(P_c) || k || U_s</math>
 
 note over Client
   <math>"hash" = H("pass")</math>
@@ -24,14 +24,6 @@ end note
 
 note over Client
   <math>P_c = D_{W_c}^k(E_{W_c}^k(P_c))</math>
-end note
-
-note over Client
-  <math>S_{cs} = DH(P_c, U_s)</math>
-end note
-
-note over Client
-  <math>"Check "\tau</math>
 end note
 
 @enduml

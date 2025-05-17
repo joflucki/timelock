@@ -4,11 +4,12 @@ participant Client
 participant Server
 database Database
 
+
 note over Client
-  Retrieve keys
+  <math>\tau_1 = "MAC"_{S_{cs}}(I_r || I_c)</math>
 end note
 
-Client ->> Server: <math>I_r || I_c || \tau</math>
+Client ->> Server: <math>(I_r || I_c) || \tau_1</math>
 
 Server ->> Database: Request
 Database ->> Server: <math>U_r || U_c</math>
@@ -18,42 +19,42 @@ note over Server
 end note
 
 note over Server
-  <math>"Check " \tau</math>
+  <math>"Check " \tau_1</math>
 end note
 
-Server ->> Client: <math>U_r || \tau</math>
-
-note over Client
-  <math>"Check "\tau</math>
-end note
-
+Server ->> Client: <math>U_r</math>
 
 note over Client
   <math>S_{cr} = "DH"(U_r, P_c)</math>
 end note
 
 note over Client
-  <math>"Pick "k_1, k_2</math>
+  <math>"Pick "k_1, k_2, S_m</math>
 end note
 
-Client ->> Server: <math>E_{S_{cs}}^{k_2}(I_c || I_r || t || E_{S_{cr}}^{k_1}(M) || \k_1 || \tau_1) || \k_2 || \tau_2</math>
+note over Client
+  <math>\tau_{"key"} = "MAC"_{S_{cr}}(E_{S_{cr}}^{k_1}(S_m) || k_1)</math>
+end note
+
+note over Client
+  <math>\tau_{"data"} = "MAC"_{S_{cr}}(E_{S_m}^{k_2}(M) || k_2)</math>
+end note
+
+note over Client
+<math>"Select unlock time " t</math>
+end note
+
+note over Client
+  <math>\tau_3 = "MAC"_{S_{cs}}(t || (E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data") </math>
+end note
+
+
+Client ->> Server: <math>(t ||(E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data") || \tau_3</math>
 
 note over Server
-  <math>\cdots = D_{S_{cs}}^{k_2}(E_{S_{cs}}^{k_2}(\cdots))</math>
-end note
-
-note over Server
-  <math>"Check " \tau_2</math>
+  <math>"Check " \tau_3</math>
 end note
 
 
-note over Server
-  <math>"Pick symmetric key " S_m</math>
-end note
-
-note over Server
-  <math>"Pick " k_3</math>
-end note
-
-Server ->> Database: <math>I_c || I_r || t || E_{S_m}^{k_3}(E_{S_{cr}}^{k_1}(M) || k_1 ) || k_3 ||  \tau_1 || S_m</math>
+Server ->> Database: <math>t || (E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data"</math>
 @enduml

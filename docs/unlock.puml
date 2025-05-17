@@ -5,10 +5,10 @@ participant Server
 database Database
 
 note over Recipient
-  Retrieve keys
+<math>\tau = "MAC"_{S_{cs}}(I_r || I_m)</math>
 end note
 
-Recipient ->> Server: <math>I_r || I_m || \tau</math>
+Recipient ->> Server: <math>(I_r || I_m) || \tau</math>
 Server ->> Database: Request
 Database ->> Server: <math>U_r</math>
 
@@ -29,34 +29,23 @@ end note
 
 
 Server ->> Database: Request
-Database ->> Server: <math>S_m || \tau_1</math>
-
-note over Server
-  <math>"Pick "k_1</math>
-end note
-
-Server ->> Recipient: <math>E_{S_{sr}}^{k_1}(S_m || \tau_1) || k_1 || \tau_2</math>
-
+Database ->> Server: <math>U_c || (E_{S_{cr}}^{k_2}(S_m) || k_2) || \tau_"key"</math>
+Server ->> Recipient: <math>U_c ||(E_{S_{cr}}^{k_2}(S_m) || k_2) || \tau_"key"</math>
 
 note over Recipient
-  <math>"Check " \tau_2</math>
+<math>S_{cr} = DH(U_c, P_r)</math>
 end note
 
 note over Recipient
-  <math>S_m, \tau_1 = D_{S_{sr}}^{k_1}(E_{S_{sr}}(S_m||\tau_1))</math>
+<math>"Check " \tau_"key"</math>
 end note
 
 note over Recipient
-  <math>E_{S_{cr}}^{k_2}(M), k_2 = D_{S_m}^{k_1}(E_{S_m}^{k_1}(E_{S_{cr}}^{k_2}(M)|| k_2))</math>
+<math>S_m = D_{S_{cr}}^{k_2}(E_{S_{cr}}^{k_2}(S_m))</math>
 end note
 
 note over Recipient
-  <math>M = D_{S_{cr}}^{k_2}(E_{S_{cr}}^{k_2}(M))</math>
+<math>M = D_{S_m}^{k_1}(E_{S_m}^{k_1}(M))</math>
 end note
-
-note over Recipient
-  <math>"Check " \tau_1</math>
-end note
-
 
 @enduml

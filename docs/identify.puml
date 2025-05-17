@@ -10,11 +10,7 @@ note over Client
 end note
 
 note over Client
-  <math>"hash" = H("pass")</math>
-end note
-
-note over Client
-  <math>W_c = HKDF("hash")</math>
+  <math>W_c = H("pass")</math>
 end note
 
 note over Client
