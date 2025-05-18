@@ -2,27 +2,34 @@
 title Key structure
 
 rectangle "Password" as P
-rectangle "Derived Key" as K
+rectangle "Master Key" as MK
 rectangle "Shared Key" as SK
+rectangle "Encryption Key" as EK
+rectangle "Authentication Key" as AK
 rectangle "Private Key" as PK
+rectangle "Public Key" as UK
 rectangle "Encrypted Private Key" as EPK
-rectangle "Public Key of Server/Recipient" as UK
+rectangle "Public Key of Server/Recipient" as UKR
 
 
 circle "Hash()" as H
 circle "Diffie-Hellman()" as DH
 circle "Encrypt()" as E
+circle "HKDF()" as HKDF
 
 
 P -> H
-H -> PK
+H -> MK
+MK -> HKDF
+HKDF --> AK
+HKDF -> EK
+PK .. UK
 
-
-K --> E
+EK --> E
 PK -> E
 E -> EPK
 
-UK -> DH
+UKR -> DH
 PK --> DH
 DH -> SK
 

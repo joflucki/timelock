@@ -5,20 +5,26 @@ participant Client
 participant Server
 database Database
 
-note over Client
+rnote over Client
   <math>"Pick asymmtric keys " P_c, U_c</math>
-end note
+end rnote
 
-note over Client
-  <math>W_c = H("pass")</math>
-end note
+rnote over Client
+  <math>S_"master" = H("pass")</math>
+end rnote
+rnote over Client
+  <math>S_"auth" = HKDF(S_"master")</math>
+end rnote
+rnote over Client
+  <math>S_"enc" = HKDF(S_"master")</math>
+end rnote
 
-note over Client
+rnote over Client
   <math>"Pick " k</math>
-end note
+end rnote
 
 
-Client ->> Server: <math>I_c || U_c || E_{W_c}^k(P_c) || k</math>
+Client ->> Server: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k</math>
 
-Server ->> Database: <math>I_c || U_c || E_{W_c}^k(P_c) || k</math>
+Server ->> Database: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k</math>
 @enduml

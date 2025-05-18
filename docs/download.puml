@@ -5,32 +5,32 @@ participant Recipient
 participant Server
 database Database
 
-note over Recipient
+rnote over Recipient
 <math>\tau = "MAC"_{S_{cs}}(I_r || I_m)</math>
-end note
+end rnote
 
 Recipient ->> Server: <math>(I_r || I_m) || \tau</math>
 Server ->> Database: Request
 Database ->> Server: <math>U_r</math>
 
-note over Server
+rnote over Server
   <math>S_{sr} = DH(U_r, P_s)</math>
-end note
+end rnote
 
-note over Server
+rnote over Server
   <math>"Check "\tau</math>
-end note
+end rnote
 
 Server ->> Database: Request
 Database ->> Server: <math>U_c || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data"</math>
 Server ->> Recipient: <math>U_c || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data"</math>
 
-note over Recipient
+rnote over Recipient
 <math>S_{cr} = DH(U_c, P_r)</math>
-end note
+end rnote
 
-note over Recipient
+rnote over Recipient
 <math>"Check "\tau_"data"</math>
-end note
+end rnote
 
 @enduml

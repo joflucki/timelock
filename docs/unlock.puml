@@ -4,48 +4,48 @@ participant Recipient
 participant Server
 database Database
 
-note over Recipient
+rnote over Recipient
 <math>\tau = "MAC"_{S_{cs}}(I_r || I_m)</math>
-end note
+end rnote
 
 Recipient ->> Server: <math>(I_r || I_m) || \tau</math>
 Server ->> Database: Request
 Database ->> Server: <math>U_r</math>
 
-note over Server
+rnote over Server
   <math>S_{sr} = DH(U_r, P_s)</math>
-end note
+end rnote
 
-note over Server
+rnote over Server
   <math>"Check "\tau</math>
-end note
+end rnote
 
 Server ->> Database: Request
 Database ->> Server: <math>t</math>
 
-note over Server
+rnote over Server
   <math>"Check "t</math>
-end note
+end rnote
 
 
 Server ->> Database: Request
 Database ->> Server: <math>U_c || (E_{S_{cr}}^{k_2}(S_m) || k_2) || \tau_"key"</math>
 Server ->> Recipient: <math>U_c ||(E_{S_{cr}}^{k_2}(S_m) || k_2) || \tau_"key"</math>
 
-note over Recipient
+rnote over Recipient
 <math>S_{cr} = DH(U_c, P_r)</math>
-end note
+end rnote
 
-note over Recipient
+rnote over Recipient
 <math>"Check " \tau_"key"</math>
-end note
+end rnote
 
-note over Recipient
+rnote over Recipient
 <math>S_m = D_{S_{cr}}^{k_2}(E_{S_{cr}}^{k_2}(S_m))</math>
-end note
+end rnote
 
-note over Recipient
+rnote over Recipient
 <math>M = D_{S_m}^{k_1}(E_{S_m}^{k_1}(M))</math>
-end note
+end rnote
 
 @enduml

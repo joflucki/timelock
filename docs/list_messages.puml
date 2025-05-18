@@ -5,21 +5,21 @@ participant Recipient
 participant Server
 database Database
 
-note over Recipient
+rnote over Recipient
   <math>\tau = "MAC"_{S_{cs}}(I_r)</math>
-end note
+end rnote
 
 Recipient ->> Server: <math>I_r || \tau</math>
 Server ->> Database: Request
 Database ->> Server: <math>U_r</math>
 
-note over Server
+rnote over Server
   <math>S_{sr} = DH(U_r, P_s)</math>
-end note
+end rnote
 
-note over Server
+rnote over Server
   <math>"Check "\tau</math>
-end note
+end rnote
 
 Server ->> Database: Request
 Database ->> Server: <math>I_{m_1} || I_{m_2} || \cdots || I_{m_n} </math>
