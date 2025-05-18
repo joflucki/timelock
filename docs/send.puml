@@ -6,10 +6,10 @@ database Database
 
 
 rnote over Client
-  <math>\tau_1 = "MAC"_{S_{cs}}(I_r || I_c)</math>
+  <math>\tau = "MAC"_{S_{cs}}(I_r || I_c)</math>
 end rnote
 
-Client ->> Server: <math>(I_r || I_c) || \tau_1</math>
+Client ->> Server: <math>(I_r || I_c) || \tau</math>
 
 Server ->> Database: Request
 Database ->> Server: <math>U_r || U_c</math>
@@ -19,7 +19,7 @@ rnote over Server
 end rnote
 
 rnote over Server
-  <math>"Check " \tau_1</math>
+  <math>"Check " \tau</math>
 end rnote
 
 Server ->> Client: <math>U_r</math>
@@ -45,14 +45,14 @@ rnote over Client
 end rnote
 
 rnote over Client
-  <math>\tau_3 = "MAC"_{S_{cs}}(t || (E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data") </math>
+  <math>\tau = "MAC"_{S_{cs}}(t || (E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data") </math>
 end rnote
 
 
-Client ->> Server: <math>(t ||(E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data") || \tau_3</math>
+Client ->> Server: <math>(t ||(E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data") || \tau</math>
 
 rnote over Server
-  <math>"Check " \tau_3</math>
+  <math>"Check " \tau</math>
 end rnote
 
 
