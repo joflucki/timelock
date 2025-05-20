@@ -1,3 +1,7 @@
+//! This module wraps libsodium bindings
+//! and offers a pragmatic Rust API for cryptography
+//! related tasks.
+
 use libc;
 use libsodium_sys;
 use std::ffi::CString;
@@ -6,54 +10,73 @@ pub fn init() -> i32 {
     unsafe { libsodium_sys::sodium_init() }
 }
 
-/// Derives the public key associated with a private key.
-pub fn compute_public_key(private_key: Vec<u8>) -> Vec<u8> {
-    let mut public_key: Vec<u8> = vec![0, 32];
-    let result = unsafe {
-        libsodium_sys::crypto_scalarmult_base(
-            public_key.as_mut_ptr() as *mut libc::c_uchar,
-            private_key.as_ptr() as *const libc::c_uchar,
+pub fn generate_keypair(public_key: *mut [u8; 32], private_key: *mut [u8; 32]) {
+    let ret = unsafe {
+        libsodium_sys::crypto_box_keypair(
+            public_key as *mut libc::c_uchar,
+            private_key as *mut libc::c_uchar,
         )
     };
-    if result != 0 {
-        panic!("Key derivation failed");
+    if ret != 0 {
+        panic!("Keypair generation failed");
     }
-    public_key
 }
 
-/// Generates a symmetric key.
-pub fn generate_symmetric_key() -> Vec<u8> {
-    let mut private_key: Vec<u8> = vec![0, 32];
-    unsafe {
-        libsodium_sys::crypto_secretstream_xchacha20poly1305_keygen(
-            private_key.as_mut_ptr() as *mut libc::c_uchar
-        );
-    }
-    private_key
-}
-
-/// Derives a sub key from a master key.
-pub fn derive_key(prk: &[u8], context: &str, key_len: usize) -> Vec<u8> {
-    assert_eq!(
-        prk.len(),
-        libsodium_sys::crypto_kdf_hkdf_sha256_KEYBYTES as usize
-    );
-    let mut subkey: Vec<u8> = vec![0u8; key_len];
+/// Derives a subkey from a master key.
+pub fn derive_key(master_key: &[u8; 32], sub_key: *mut [u8; 32], context: &str) {
     let ctx_cstr = CString::new(context).expect("Invalid context string");
 
     let result = unsafe {
         libsodium_sys::crypto_kdf_hkdf_sha256_expand(
-            subkey.as_mut_ptr(),
-            subkey.len(),
+            sub_key as *mut libc::c_uchar,
+            32,
             ctx_cstr.as_ptr(),
             context.len(),
-            prk.as_ptr(),
+            master_key.as_ptr(),
         )
     };
 
     if result != 0 {
         panic!("Key derivation failed");
     }
+}
 
-    subkey
+pub fn hash_password(hash: *mut [u8; 32], password: &str, salt: &[u8; 32]) {
+    let c_password = CString::new(password).expect("CString::new failed");
+    let ret = unsafe {
+        libsodium_sys::crypto_pwhash(
+            hash as *mut libc::c_uchar,
+            32,
+            c_password.as_ptr(),
+            password.len() as u64,
+            salt.as_ptr(),
+            libsodium_sys::crypto_pwhash_OPSLIMIT_INTERACTIVE as u64,
+            libsodium_sys::crypto_pwhash_MEMLIMIT_INTERACTIVE as usize,
+            libsodium_sys::crypto_pwhash_ALG_DEFAULT as i32,
+        )
+    };
+    if ret != 0 {
+        panic!("Password hashing failed");
+    }
+}
+
+pub fn random_buffer(buffer: &mut [u8]) {
+    unsafe {
+        libsodium_sys::randombytes_buf(buffer.as_mut_ptr() as *mut libc::c_void, buffer.len());
+    }
+}
+
+pub fn encrypt(nonce: &[u8; 24], plaintext: &[u8], key: &[u8; 32], ciphertext: *mut [u8]) {
+    let ret = unsafe {
+        libsodium_sys::crypto_secretbox_easy(
+            ciphertext as *mut libc::c_uchar,
+            plaintext.as_ptr(),
+            plaintext.len() as u64,
+            nonce.as_ptr(),
+            key.as_ptr(),
+        )
+    };
+    if ret != 0 {
+        panic!("Encryption failed");
+    }
 }
