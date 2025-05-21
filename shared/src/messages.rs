@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 #[serde(tag = "type", content = "data")]
 pub enum ClientMessage {
     Identify {
-        user_id: String,
+        username: String,
         public_key: [u8; 32],
         auth_key: [u8; 32],
         encrypted_private_key: [u8; 32],
@@ -14,14 +14,14 @@ pub enum ClientMessage {
         nonce: [u8; 24],
     },
     GetSalt {
-        user_id: String,
+        username: String,
     },
     GetCredentials {
-        user_id: String,
+        username: String,
         auth_key: [u8; 32],
     },
     ResetPassword {
-        user_id: String,
+        username: String,
         auth_key: [u8; 32],
         encrypted_private_key: [u8; 32],
         salt: [u8; 32],
@@ -32,8 +32,8 @@ pub enum ClientMessage {
         id: String,
     },
     SendMessage {
-        sender_id: String,
-        receiver_id: String,
+        sender_username: String,
+        recipient_username: String,
         timestamp: u64,
         encrypted_key: [u8; 32],
         key_nonce: [u8; 24],
@@ -44,16 +44,16 @@ pub enum ClientMessage {
         tag: [u8; 32],
     },
     ListMessages {
-        user_id: String,
+        username: String,
         tag: [u8; 32],
     },
     DownloadMessage {
-        user_id: String,
+        username: String,
         message_id: String,
         tag: [u8; 32],
     },
     UnlockMessage {
-        user_id: String,
+        username: String,
         message_id: String,
         tag: [u8; 32],
     },

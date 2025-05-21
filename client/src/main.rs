@@ -1,12 +1,119 @@
-mod app;
+mod cli;
 mod crypto;
-use app::*;
+mod network;
+
+use clap::Parser;
+use cli::*;
 use crypto::*;
+use shared::messages::{ClientMessage, ServerMessage};
 
 fn main() {
-    let app = App::new();
-    app.run();
+    // Initialize the cryptography module.
+    // If it fails, nothing works
+    // and we should panic
+    let ret = crypto::init();
+    if ret != 0 {
+        panic!("Cryptography module initialization failed")
+    }
+
+    // Parse command line arguments
+    let cli = Cli::parse();
+    match &cli.command {
+        Commands::Login { username, password } => login(username, password),
+        Commands::Send {
+            filepath,
+            recipient_username,
+        } => send(filepath, recipient_username),
+        Commands::List { list_command } => match list_command {
+            ListCommands::Users => list_users(),
+            ListCommands::Messages => list_messages(),
+        },
+        Commands::Signup { username, password } => signup(username, password),
+        Commands::Reset { password } => reset(password),
+        Commands::Download { filepath, file_id } => download(filepath, file_id),
+        Commands::Unlock { filepath, file_id } => unlock(filepath, file_id),
+    }
 }
+
+// -----------------------------------------------------
+
+fn login(username: &String, password: &String) {
+    // Get salt
+    network::write(ClientMessage::GetSalt {
+        username: username.clone(),
+    });
+    let option = match network::read() {
+        ServerMessage::GetSaltResponse { salt } => Some(salt),
+        _ => None,
+    };
+    if option.is_none() {
+        // Return an error in the future
+        // Execution stops here
+        todo!("Handle error: salt not found");
+    }
+    let salt: [u8; 32] = option.unwrap();
+
+    // Generate root keys
+    let mut master_key: [u8; 32] = [0; 32];
+    hash_password(&mut master_key, password, &salt);
+
+    // Derive auth key from master key
+    let auth_context: &'static str = "Authentication";
+    let mut auth_key: [u8; 32] = [0; 32];
+    derive_key(&master_key, &mut auth_key, auth_context);
+
+    // Send to server
+    network::write(ClientMessage::GetCredentials {
+        username: username.clone(),
+        auth_key,
+    });
+    let option = match network::read() {
+        ServerMessage::GetCredentialsResponse {
+            public_key,
+            encrypted_private_key,
+            nonce,
+        } => Some((public_key, encrypted_private_key, nonce)),
+        _ => todo!("Handle error: credentials not found"),
+    };
+    if option.is_none() {
+        // Return an error in the future
+        // Execution stops here
+        todo!("Handle error: credentials not found");
+    }
+    let (public_key, encrypted_private_key, nonce) = option.unwrap();
+
+    // Derive auth key from master key
+    let auth_context: &'static str = "Authentication";
+    let mut auth_key: [u8; 32] = [0; 32];
+    derive_key(&master_key, &mut auth_key, auth_context);
+
+    // Decrypt private key
+    let mut decrypted_private_key: [u8; 32] = [0; 32];
+    // ...
+}
+
+fn signup(username: &String, password: &String) {
+    // Generate complete key suite
+    // Send to server
+    // If ok keep
+    // If not delete
+    // Compute shared server key
+}
+
+fn send(filepath: &String, recipient_username: &String) {}
+
+fn list_users() {}
+
+fn list_messages() {}
+
+fn reset(password: &String) {}
+
+fn download(filepath: &String, file_id: &String) {}
+
+fn unlock(filepath: &String, file_id: &String) {}
+
+// -----------------------------------------------------
+
 fn generate_keys() {
     let result = crypto::init();
     if result != 0 {
