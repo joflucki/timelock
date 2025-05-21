@@ -10,7 +10,7 @@ pub fn init() -> i32 {
     unsafe { libsodium_sys::sodium_init() }
 }
 
-pub fn generate_keypair(public_key: *mut [u8; 32], private_key: *mut [u8; 32]) {
+pub fn generate_keypair(public_key: &mut [u8; 32], private_key: &mut [u8; 32]) {
     let ret = unsafe {
         libsodium_sys::crypto_box_keypair(
             public_key as *mut libc::c_uchar,
@@ -23,7 +23,7 @@ pub fn generate_keypair(public_key: *mut [u8; 32], private_key: *mut [u8; 32]) {
 }
 
 /// Derives a subkey from a master key.
-pub fn derive_key(master_key: &[u8; 32], sub_key: *mut [u8; 32], context: &str) {
+pub fn derive_key(master_key: &[u8; 32], sub_key: &mut [u8; 32], context: &str) {
     let ctx_cstr = CString::new(context).expect("Invalid context string");
 
     let result = unsafe {
@@ -41,7 +41,7 @@ pub fn derive_key(master_key: &[u8; 32], sub_key: *mut [u8; 32], context: &str) 
     }
 }
 
-pub fn hash_password(hash: *mut [u8; 32], password: &str, salt: &[u8; 32]) {
+pub fn hash_password(hash: &mut [u8; 32], password: &str, salt: &[u8; 32]) {
     let c_password = CString::new(password).expect("CString::new failed");
     let ret = unsafe {
         libsodium_sys::crypto_pwhash(
@@ -66,10 +66,10 @@ pub fn random_buffer(buffer: &mut [u8]) {
     }
 }
 
-pub fn encrypt(nonce: &[u8; 24], plaintext: &[u8], key: &[u8; 32], ciphertext: *mut [u8]) {
+pub fn encrypt(nonce: &[u8; 24], plaintext: &[u8], key: &[u8; 32], ciphertext: &mut [u8]) {
     let ret = unsafe {
         libsodium_sys::crypto_secretbox_easy(
-            ciphertext as *mut libc::c_uchar,
+            ciphertext.as_mut_ptr() as *mut libc::c_uchar,
             plaintext.as_ptr(),
             plaintext.len() as u64,
             nonce.as_ptr(),
