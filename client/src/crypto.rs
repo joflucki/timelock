@@ -12,10 +12,7 @@ pub fn init() -> i32 {
 
 pub fn generate_keypair(public_key: &mut [u8; 32], private_key: &mut [u8; 32]) {
     let ret = unsafe {
-        libsodium_sys::crypto_box_keypair(
-            public_key as *mut libc::c_uchar,
-            private_key as *mut libc::c_uchar,
-        )
+        libsodium_sys::crypto_box_keypair(public_key.as_mut_ptr(), private_key.as_mut_ptr())
     };
     if ret != 0 {
         panic!("Keypair generation failed");
@@ -28,7 +25,7 @@ pub fn derive_key(master_key: &[u8; 32], sub_key: &mut [u8; 32], context: &str) 
 
     let result = unsafe {
         libsodium_sys::crypto_kdf_hkdf_sha256_expand(
-            sub_key as *mut libc::c_uchar,
+            sub_key.as_mut_ptr(),
             32,
             ctx_cstr.as_ptr(),
             context.len(),
@@ -45,12 +42,12 @@ pub fn hash_password(hash: &mut [u8; 32], password: &str, salt: &[u8; 32]) {
     let c_password = CString::new(password).expect("CString::new failed");
     let ret = unsafe {
         libsodium_sys::crypto_pwhash(
-            hash as *mut libc::c_uchar,
-            32,
+            hash.as_mut_ptr(),
+            hash.len() as u64,
             c_password.as_ptr(),
             password.len() as u64,
             salt.as_ptr(),
-            libsodium_sys::crypto_pwhash_OPSLIMIT_INTERACTIVE as u64,
+            100,
             libsodium_sys::crypto_pwhash_MEMLIMIT_INTERACTIVE as usize,
             libsodium_sys::crypto_pwhash_ALG_DEFAULT as i32,
         )
@@ -66,10 +63,15 @@ pub fn random_buffer(buffer: &mut [u8]) {
     }
 }
 
-pub fn encrypt(nonce: &[u8; 24], plaintext: &[u8], key: &[u8; 32], ciphertext: &mut [u8]) {
+pub fn symmetric_encrypt(
+    nonce: &[u8; 24],
+    plaintext: &[u8],
+    key: &[u8; 32],
+    ciphertext: &mut [u8],
+) {
     let ret = unsafe {
         libsodium_sys::crypto_secretbox_easy(
-            ciphertext.as_mut_ptr() as *mut libc::c_uchar,
+            ciphertext.as_mut_ptr(),
             plaintext.as_ptr(),
             plaintext.len() as u64,
             nonce.as_ptr(),

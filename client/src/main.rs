@@ -1,7 +1,13 @@
+mod app;
 mod crypto;
+use app::*;
 use crypto::*;
 
 fn main() {
+    let app = App::new();
+    app.run();
+}
+fn generate_keys() {
     let result = crypto::init();
     if result != 0 {
         panic!("Cryptography module initialization failed")
@@ -47,8 +53,6 @@ fn main() {
     random_buffer(&mut nonce);
     println!("Nonce:\t\t\t{:?}", nonce);
 
-    encrypt(&nonce, &private_key, &enc_key, &mut encrypted_private_key);
+    symmetric_encrypt(&nonce, &private_key, &enc_key, &mut encrypted_private_key);
     println!("Encrypted private key:\t{:?}", encrypted_private_key);
-
-    // Send credentials to server
 }
