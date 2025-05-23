@@ -32,17 +32,21 @@ fn main() {
         Commands::Reset { password } => reset(password),
         Commands::Download { filepath, file_id } => download(filepath, file_id),
         Commands::Unlock { filepath, file_id } => unlock(filepath, file_id),
+        Commands::Logout => logout(),
     }
 }
 
 // -----------------------------------------------------
 
 fn login(username: &String, password: &String) {
+    network::connect("Haha", "timelock.ch", "bro come on");
+
     // Get salt
     network::write(ClientMessage::GetSalt {
         username: username.clone(),
-    });
-    let option = match network::read() {
+    })
+    .expect("Error sending salt request to server");
+    let option = match network::read().expect("Error reading response from server") {
         ServerMessage::GetSaltResponse { salt } => Some(salt),
         _ => None,
     };
@@ -66,8 +70,9 @@ fn login(username: &String, password: &String) {
     network::write(ClientMessage::GetCredentials {
         username: username.clone(),
         auth_key,
-    });
-    let option = match network::read() {
+    })
+    .expect("Error sending credential request to server");
+    let option = match network::read().expect("Woopsies") {
         ServerMessage::GetCredentialsResponse {
             public_key,
             encrypted_private_key,
@@ -89,8 +94,9 @@ fn login(username: &String, password: &String) {
 
     // Decrypt private key
     let mut decrypted_private_key: [u8; 32] = [0; 32];
-    // ...
 }
+
+fn logout() {}
 
 fn signup(username: &String, password: &String) {
     // Generate complete key suite

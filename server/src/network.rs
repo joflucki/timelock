@@ -1,10 +1,10 @@
-use anyhow::Result;
-use rustls::pki_types::ServerName;
-use rustls::{ClientConfig, ClientConnection, RootCertStore, StreamOwned};
-use shared::messages::{ClientMessage, ServerMessage};
-use std::fs;
+/*
+use rustls::{ClientConfig, OwnedTrustAnchor, RootCertStore, ClientConnection, StreamOwned, ServerName};
 use std::net::TcpStream;
 use std::sync::Arc;
+use std::io::Write;
+use std::fs;
+use anyhow::Result;
 
 fn load_client_config(ca_cert_path: &str) -> Result<ClientConfig> {
     let mut root_store = RootCertStore::empty();
@@ -14,39 +14,12 @@ fn load_client_config(ca_cert_path: &str) -> Result<ClientConfig> {
     root_store.add_parsable_certificates(&certs);
 
     let config = ClientConfig::builder()
+        .with_safe_defaults()
         .with_root_certificates(root_store)
         .with_no_client_auth();
 
     Ok(config)
 }
-
-pub fn connect(
-    addr: &str,
-    domain: &str,
-    ca_cert_path: &str,
-) -> Result<StreamOwned<ClientConnection, TcpStream>> {
-    let config = load_client_config(ca_cert_path)?;
-    Ok(StreamOwned::new(
-        ClientConnection::new(
-            Arc::new(config),
-            ServerName::try_from(domain.to_string()).expect("Invalid DNS name"),
-        )?,
-        TcpStream::connect(addr)?,
-    ))
-}
-
-pub fn write(
-    stream: &StreamOwned<ClientConnection, TcpStream>,
-    message: ClientMessage,
-) -> Result<()> {
-    todo!("Implement the write function to send messages to the server");
-}
-
-pub fn read(stream: &StreamOwned<ClientConnection, TcpStream>) -> Result<ServerMessage> {
-    todo!("Implement the read function to receive messages from the server");
-}
-
-/*
 
 fn send_tls_message(domain: &str, addr: &str, config: ClientConfig, message: &SecureMessage) -> Result<()> {
     let tcp_stream = TcpStream::connect(addr)?;
@@ -61,5 +34,6 @@ fn send_tls_message(domain: &str, addr: &str, config: ClientConfig, message: &Se
     println!("Sent: {:?}", message);
     Ok(())
 }
+
 
 */

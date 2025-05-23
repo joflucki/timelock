@@ -16,6 +16,7 @@ pub enum Commands {
         #[arg(long)]
         password: String,
     },
+    Logout,
     Signup {
         #[arg(long)]
         username: String,
