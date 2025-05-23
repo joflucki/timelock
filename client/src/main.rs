@@ -39,14 +39,18 @@ fn main() {
 // -----------------------------------------------------
 
 fn login(username: &String, password: &String) {
-    network::connect("Haha", "timelock.ch", "bro come on");
+    let mut stream =
+        network::connect("localhost:1123", "timelock.ch", "/stuff/hello/cert.pem").expect("Error connecting to server");
 
     // Get salt
-    network::write(ClientMessage::GetSalt {
-        username: username.clone(),
-    })
+    network::write(
+        &mut stream,
+        ClientMessage::GetSalt {
+            username: username.clone(),
+        },
+    )
     .expect("Error sending salt request to server");
-    let option = match network::read().expect("Error reading response from server") {
+    let option = match network::read(&mut stream).expect("Error reading response from server") {
         ServerMessage::GetSaltResponse { salt } => Some(salt),
         _ => None,
     };
@@ -67,12 +71,15 @@ fn login(username: &String, password: &String) {
     derive_key(&master_key, &mut auth_key, auth_context);
 
     // Send to server
-    network::write(ClientMessage::GetCredentials {
-        username: username.clone(),
-        auth_key,
-    })
+    network::write(
+        &mut stream,
+        ClientMessage::GetCredentials {
+            username: username.clone(),
+            auth_key,
+        },
+    )
     .expect("Error sending credential request to server");
-    let option = match network::read().expect("Woopsies") {
+    let option = match network::read(&mut stream).expect("Woopsies") {
         ServerMessage::GetCredentialsResponse {
             public_key,
             encrypted_private_key,
