@@ -8,8 +8,7 @@ clap = { version = "4.5.38", features = ["derive"] }
 shared = { path = "../shared" }
 libsodium-sys-stable = "1.22.3"
 libc = "0.2.172"
-rustls = "0.23.27"
 serde = "1.0.219"
-rustls-pemfile = "2.2.0"
 anyhow = "1.0.98"
 bincode = "1.3.3"
+native-tls = { version = "0.2.14", features = ["vendored"] }

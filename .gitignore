@@ -1,2 +1,10 @@
+# Cargo output files
 /target
+
+# PlantUML output files
 /docs/*.png
+
+# TLS/SSL files
+*.pem
+*.key
+*.crt

@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 
 /// Client messages sent to the server
 #[derive(Serialize, Deserialize, Debug)]
-#[serde(tag = "type", content = "data")]
 pub enum ClientMessage {
     Identify {
         username: String,
@@ -61,7 +60,6 @@ pub enum ClientMessage {
 
 /// Server messages sent to the client
 #[derive(Serialize, Deserialize, Debug)]
-#[serde(tag = "type", content = "data")]
 pub enum ServerMessage {
     IdentifiyResponse {
         ok: bool,

@@ -39,8 +39,7 @@ fn main() {
 // -----------------------------------------------------
 
 fn login(username: &String, password: &String) {
-    let mut stream =
-        network::connect("localhost:1123", "timelock.ch", "/stuff/hello/cert.pem").expect("Error connecting to server");
+    let mut stream = network::connect().expect("Error connecting to server");
 
     // Get salt
     network::write(
