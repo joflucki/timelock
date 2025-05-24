@@ -13,14 +13,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
+
     - name: Write certificate and key files
       run: |
         mkdir -p ./client ./server
-        echo "${{ secrets.SERVER_CERT }}" > ./client/server.crt
-        echo "${{ secrets.SERVER_KEY }}" > ./server/server.key
-        echo "${{ secrets.SERVER_PEM }}" > ./server/server.pem
-    - uses: actions/checkout@v4
+        echo "${{ secrets.SERVER_CERT }}" > ./client/src/server.crt
+        echo "${{ secrets.SERVER_KEY }}" > ./server/src/server.key
+        echo "${{ secrets.SERVER_PEM }}" > ./server/src/server.pem
+        
     - name: Build
       run: cargo build --verbose
+
     - name: Run tests
       run: cargo test --verbose
