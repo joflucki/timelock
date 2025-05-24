@@ -19,7 +19,7 @@ fn main() {
     // Parse command line arguments
     let cli = Cli::parse();
     match &cli.command {
-        Commands::Login { username, password } => login(username, password),
+        Commands::Login { username } => login(username),
         Commands::Send {
             filepath,
             recipient_username,
@@ -29,7 +29,7 @@ fn main() {
             ListCommands::Messages => list_messages(),
         },
         Commands::Signup { username, password } => signup(username, password),
-        Commands::Reset { password } => reset(password),
+        Commands::Reset {} => reset(),
         Commands::Download { filepath, file_id } => download(filepath, file_id),
         Commands::Unlock { filepath, file_id } => unlock(filepath, file_id),
         Commands::Logout => logout(),
@@ -38,7 +38,7 @@ fn main() {
 
 // -----------------------------------------------------
 
-fn login(username: &String, password: &String) {
+fn login(username: &String) {
     let mut stream = network::connect().expect("Error connecting to server");
 
     // Get salt
@@ -60,9 +60,14 @@ fn login(username: &String, password: &String) {
     }
     let salt: [u8; 32] = option.unwrap();
 
+    // Prompt for password
+    let password = rpassword::prompt_password("Your password: ")
+        .unwrap()
+        .to_string();
+
     // Generate root keys
     let mut master_key: [u8; 32] = [0; 32];
-    hash_password(&mut master_key, password, &salt);
+    hash_password(&mut master_key, &password, &salt);
 
     // Derive auth key from master key
     let auth_context: &'static str = "Authentication";
@@ -104,13 +109,7 @@ fn login(username: &String, password: &String) {
 
 fn logout() {}
 
-fn signup(username: &String, password: &String) {
-    // Generate complete key suite
-    // Send to server
-    // If ok keep
-    // If not delete
-    // Compute shared server key
-}
+fn signup(username: &String, password: &String) {}
 
 fn send(filepath: &String, recipient_username: &String) {}
 
@@ -118,7 +117,9 @@ fn list_users() {}
 
 fn list_messages() {}
 
-fn reset(password: &String) {}
+fn reset() {
+    let password = rpassword::prompt_password("New password: ").unwrap();
+}
 
 fn download(filepath: &String, file_id: &String) {}
 

@@ -13,8 +13,6 @@ pub enum Commands {
     Login {
         #[arg(long)]
         username: String,
-        #[arg(long)]
-        password: String,
     },
     Logout,
     Signup {
@@ -44,10 +42,7 @@ pub enum Commands {
         #[arg(long)]
         file_id: String,
     },
-    Reset {
-        #[arg(long)]
-        password: String,
-    },
+    Reset {},
 }
 
 #[derive(Subcommand)]

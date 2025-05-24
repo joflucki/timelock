@@ -12,3 +12,4 @@ serde = "1.0.219"
 anyhow = "1.0.98"
 bincode = "1.3.3"
 native-tls = { version = "0.2.14", features = ["vendored"] }
+rpassword = "7.4.0"
