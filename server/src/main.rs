@@ -58,7 +58,7 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
             encrypted_private_key,
             salt,
             nonce,
-            tag,
+            mac,
         } => todo!(),
         shared::messages::ClientMessage::GetPublicKey { id } => todo!(),
         shared::messages::ClientMessage::SendMessage {
@@ -67,22 +67,22 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
             timestamp,
             encrypted_key,
             key_nonce,
-            key_tag,
+            key_mac,
             encrypted_message,
             message_nonce,
-            message_tag,
-            tag,
+            message_mac,
+            mac,
         } => todo!(),
-        shared::messages::ClientMessage::ListMessages { username, tag } => todo!(),
+        shared::messages::ClientMessage::ListMessages { username, mac } => todo!(),
         shared::messages::ClientMessage::DownloadMessage {
             username,
             message_id,
-            tag,
+            mac,
         } => todo!(),
         shared::messages::ClientMessage::UnlockMessage {
             username,
             message_id,
-            tag,
+            mac: mac,
         } => todo!(),
     }
 }

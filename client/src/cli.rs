@@ -18,8 +18,6 @@ pub enum Commands {
     Signup {
         #[arg(long)]
         username: String,
-        #[arg(long)]
-        password: String,
     },
     Send {
         #[arg(long)]
@@ -42,7 +40,10 @@ pub enum Commands {
         #[arg(long)]
         file_id: String,
     },
-    Reset {},
+    Reset {
+        #[arg(long)]
+        username: String,
+    },
 }
 
 #[derive(Subcommand)]

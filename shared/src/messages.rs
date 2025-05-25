@@ -1,4 +1,5 @@
 /// This module defines the messages exchanged between the client and server.
+use crate::crypto::*;
 use serde::{Deserialize, Serialize};
 
 /// Client messages sent to the server
@@ -6,26 +7,26 @@ use serde::{Deserialize, Serialize};
 pub enum ClientMessage {
     Identify {
         username: String,
-        public_key: [u8; 32],
-        auth_key: [u8; 32],
-        encrypted_private_key: [u8; 32],
-        salt: [u8; 32],
-        nonce: [u8; 24],
+        public_key: [u8; KEY_SIZE],
+        auth_key: [u8; KEY_SIZE],
+        encrypted_private_key: [u8; KEY_SIZE],
+        salt: [u8; SALT_SIZE],
+        nonce: [u8; NONCE_SIZE],
     },
     GetSalt {
         username: String,
     },
     GetCredentials {
         username: String,
-        auth_key: [u8; 32],
+        auth_key: [u8; KEY_SIZE],
     },
     ResetPassword {
         username: String,
-        auth_key: [u8; 32],
-        encrypted_private_key: [u8; 32],
-        salt: [u8; 32],
-        nonce: [u8; 24],
-        tag: [u8; 32],
+        auth_key: [u8; KEY_SIZE],
+        encrypted_private_key: [u8; KEY_SIZE],
+        salt: [u8; SALT_SIZE],
+        nonce: [u8; NONCE_SIZE],
+        mac: [u8; MAC_SIZE],
     },
     GetPublicKey {
         id: String,
@@ -34,49 +35,50 @@ pub enum ClientMessage {
         sender_username: String,
         recipient_username: String,
         timestamp: u64,
-        encrypted_key: [u8; 32],
-        key_nonce: [u8; 24],
-        key_tag: [u8; 32],
+        encrypted_key: [u8; KEY_SIZE],
+        key_nonce: [u8; NONCE_SIZE],
+        key_mac: [u8; MAC_SIZE],
         encrypted_message: Vec<u8>,
-        message_nonce: [u8; 24],
-        message_tag: [u8; 32],
-        tag: [u8; 32],
+        message_nonce: [u8; NONCE_SIZE],
+        message_mac: [u8; MAC_SIZE],
+        mac: [u8; MAC_SIZE],
     },
     ListMessages {
         username: String,
-        tag: [u8; 32],
+        mac: [u8; MAC_SIZE],
     },
     DownloadMessage {
         username: String,
         message_id: String,
-        tag: [u8; 32],
+        mac: [u8; MAC_SIZE],
     },
     UnlockMessage {
         username: String,
         message_id: String,
-        tag: [u8; 32],
+        mac: [u8; MAC_SIZE],
     },
 }
 
 /// Server messages sent to the client
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ServerMessage {
-    IdentifiyResponse {
+    IdentifyResponse {
         ok: bool,
+        server_public_key: [u8; KEY_SIZE],
     },
     GetSaltResponse {
-        salt: [u8; 32],
+        salt: [u8; SALT_SIZE],
     },
     GetCredentialsResponse {
-        public_key: [u8; 32],
-        encrypted_private_key: [u8; 32],
-        nonce: [u8; 24],
+        server_public_key: [u8; KEY_SIZE],
+        encrypted_private_key: [u8; KEY_SIZE],
+        nonce: [u8; NONCE_SIZE],
     },
     ResetPasswordResponse {
         ok: bool,
     },
     GetPublicKeyResponse {
-        public_key: [u8; 32],
+        public_key: [u8; KEY_SIZE],
     },
     SendMessageResponse {
         ok: bool,
@@ -86,12 +88,12 @@ pub enum ServerMessage {
     },
     DownloadMessageResponse {
         encrypted_message: Vec<u8>,
-        nonce: [u8; 24],
-        tag: [u8; 32],
+        nonce: [u8; KEY_SIZE],
+        mac: [u8; MAC_SIZE],
     },
     UnlockMessageResponse {
-        encrypted_key: [u8; 32],
-        nonce: [u8; 24],
-        tag: [u8; 32],
+        encrypted_key: [u8; KEY_SIZE],
+        nonce: [u8; NONCE_SIZE],
+        mac: [u8; MAC_SIZE],
     },
 }
