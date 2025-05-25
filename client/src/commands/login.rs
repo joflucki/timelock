@@ -88,4 +88,5 @@ pub fn login(username: &String) {
         &server_public_key,
     )
     .unwrap();
+    utils::save_username(username).unwrap();
 }

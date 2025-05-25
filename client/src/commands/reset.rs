@@ -4,7 +4,10 @@ use crate::utils;
 use shared::crypto::*;
 use shared::messages::ClientMessage;
 
-pub fn reset(username: &String) {
+pub fn reset() {
+    // Load username
+    let username = utils::load_username().expect("Error loading username");
+
     // Prompt for password
     let password = rpassword::prompt_password("New password: ")
         .unwrap()

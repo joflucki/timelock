@@ -80,6 +80,8 @@ pub fn signup(username: &String) {
             &server_public_key,
         )
         .expect("Error saving keys");
+        utils::save_username(username).expect("Error saving username");
+        println!("Signup successful!");
     } else {
         panic!("Signup failed.");
     }

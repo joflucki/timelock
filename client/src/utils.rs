@@ -8,7 +8,7 @@ use std::io::{Read, Result, Write};
 /// master_key, auth_key, enc_key, private_key, public_key, server_public_key
 pub fn load_keys() -> Result<([u8; 32], [u8; 32], [u8; 32], [u8; 32], [u8; 32], [u8; 32])> {
     let dir = ProjectDirs::from("ch", "Timelock", "Client").unwrap();
-    let mut file = File::create(dir.data_dir().join("credentials"))?;
+    let mut file = File::open(dir.data_dir().join("credentials"))?;
 
     let mut master_key: [u8; 32] = [0; 32];
     let mut auth_key: [u8; 32] = [0; 32];
@@ -62,6 +62,27 @@ pub fn save_keys(
 pub fn delete_keys() -> Result<()> {
     let dir = ProjectDirs::from("ch", "Timelock", "Client").unwrap();
     let path = dir.data_dir().join("credentials");
+    std::fs::remove_file(path)?;
+    Ok(())
+}
+
+pub fn save_username(username: &str) -> Result<()> {
+    let dir = ProjectDirs::from("ch", "Timelock", "Client").unwrap();
+    let mut file = File::create(dir.data_dir().join("username"))?;
+    file.write_all(username.as_bytes())?;
+    Ok(())
+}
+
+pub fn load_username() -> Result<String> {
+    let dir = ProjectDirs::from("ch", "Timelock", "Client").unwrap();
+    let mut file = File::open(dir.data_dir().join("username"))?;
+    let mut username = String::new();
+    file.read_to_string(&mut username)?;
+    Ok(username.trim().to_string())
+}
+pub fn delete_username() -> Result<()> {
+    let dir = ProjectDirs::from("ch", "Timelock", "Client").unwrap();
+    let path = dir.data_dir().join("username");
     std::fs::remove_file(path)?;
     Ok(())
 }

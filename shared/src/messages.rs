@@ -34,13 +34,13 @@ pub enum ClientMessage {
     SendMessage {
         sender_username: String,
         recipient_username: String,
-        timestamp: u64,
+        timestamp: [u8; 8],
         encrypted_key: [u8; KEY_SIZE],
         key_nonce: [u8; NONCE_SIZE],
         key_mac: [u8; MAC_SIZE],
-        encrypted_message: Vec<u8>,
-        message_nonce: [u8; NONCE_SIZE],
-        message_mac: [u8; MAC_SIZE],
+        encrypted_data: Vec<u8>,
+        data_nonce: [u8; NONCE_SIZE],
+        data_mac: [u8; MAC_SIZE],
         mac: [u8; MAC_SIZE],
     },
     ListMessages {

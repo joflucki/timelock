@@ -4,6 +4,7 @@ mod crypto;
 mod network;
 mod utils;
 
+use chrono::DateTime;
 use clap::Parser;
 use cli::*;
 use std::path::Path;
@@ -24,13 +25,18 @@ fn main() {
         Commands::Send {
             filepath,
             recipient_username,
-        } => commands::send(Path::new(filepath), recipient_username),
+            timestamp,
+        } => commands::send(
+            Path::new(filepath),
+            recipient_username,
+            &DateTime::parse_from_str(timestamp, "%+").expect("Invalid timestamp format"),
+        ),
         Commands::List { list_command } => match list_command {
             ListCommands::Users => commands::list_users(),
             ListCommands::Messages => commands::list_messages(),
         },
         Commands::Signup { username } => commands::signup(username),
-        Commands::Reset { username } => commands::reset(username),
+        Commands::Reset {} => commands::reset(),
         Commands::Download { filepath, file_id } => {
             commands::download(Path::new(filepath), file_id)
         }

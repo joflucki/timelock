@@ -24,6 +24,8 @@ pub enum Commands {
         filepath: String,
         #[arg(long)]
         recipient_username: String,
+        #[arg(long)]
+        timestamp: String,
     },
     List {
         #[command(subcommand)]
@@ -40,10 +42,7 @@ pub enum Commands {
         #[arg(long)]
         file_id: String,
     },
-    Reset {
-        #[arg(long)]
-        username: String,
-    },
+    Reset {},
 }
 
 #[derive(Subcommand)]
