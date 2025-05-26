@@ -47,6 +47,7 @@ pub enum ClientMessage {
         username: String,
         mac: [u8; MAC_SIZE],
     },
+    ListUsers {},
     DownloadMessage {
         username: String,
         message_id: String,
@@ -84,16 +85,21 @@ pub enum ServerMessage {
         ok: bool,
     },
     ListMessagesResponse {
-        messages: Vec<String>, // TODO: Change to a more complete type
+        messages: Vec<(String, String, [u8; 8], u64)>, // (message_id, sender_username, timestamp, filesize in bytes)
+    },
+    ListUsersResponse {
+        users: Vec<String>,
     },
     DownloadMessageResponse {
-        encrypted_message: Vec<u8>,
-        nonce: [u8; KEY_SIZE],
-        mac: [u8; MAC_SIZE],
+        sender_public_key: [u8; KEY_SIZE],
+        encrypted_data: Vec<u8>,
+        data_nonce: [u8; KEY_SIZE],
+        data_mac: [u8; MAC_SIZE],
     },
     UnlockMessageResponse {
+        sender_public_key: [u8; KEY_SIZE],
         encrypted_key: [u8; KEY_SIZE],
-        nonce: [u8; NONCE_SIZE],
-        mac: [u8; MAC_SIZE],
+        key_nonce: [u8; NONCE_SIZE],
+        key_mac: [u8; MAC_SIZE],
     },
 }

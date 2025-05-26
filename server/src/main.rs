@@ -1,6 +1,6 @@
 use anyhow::Result;
 use native_tls::{Identity, TlsAcceptor, TlsStream};
-use std::io::Read;
+use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::Arc;
 use std::thread;
@@ -84,5 +84,6 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
             message_id,
             mac: mac,
         } => todo!(),
+        shared::messages::ClientMessage::ListUsers {} => todo!(),
     }
 }

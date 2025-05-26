@@ -15,3 +15,4 @@ native-tls = { version = "0.2.14", features = ["vendored"] }
 rpassword = "7.4.0"
 directories = "6.0.0"
 chrono = "0.4.41"
+tabled = "0.19.0"
