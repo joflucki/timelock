@@ -54,9 +54,12 @@ pub fn download(filepath: &Path, message_id: &String) {
         panic!("Verification failed, message may have been tampered with");
     }
 
-    File::create(filepath)
-        .expect("Failed to create file")
-        .write_all(&encrypted_data)
+    let mut file = File::create(filepath).expect("Failed to create file");
+    file.write_all(&data_mac)
+        .expect("Failed to write data to file");
+    file.write_all(&data_nonce)
+        .expect("Failed to write nonce to file");
+    file.write_all(&encrypted_data)
         .expect("Failed to write data to file");
 
     println!("Message downloaded successfully to {}", filepath.display());

@@ -2,6 +2,8 @@ use crate::crypto::*;
 use crate::network;
 use crate::utils;
 use shared::crypto::*;
+use std::io::Read;
+use std::io::Write;
 use std::path::Path;
 
 pub fn unlock(filepath: &Path, message_id: &String) {
@@ -59,5 +61,27 @@ pub fn unlock(filepath: &Path, message_id: &String) {
         &mut decrypted_key,
     );
 
-    todo!();
+    let mut encrypted_data: Vec<u8> = Vec::new();
+    let mut data_nonce: [u8; NONCE_SIZE] = [0; NONCE_SIZE];
+    let mut data_mac: [u8; MAC_SIZE] = [0; MAC_SIZE];
+
+    let mut file = std::fs::File::open(filepath).expect("Failed to open file");
+    file.read_exact(&mut data_mac)
+        .expect("Failed to read MAC from file");
+    file.read_exact(&mut data_nonce)
+        .expect("Failed to read nonce from file");
+    file.read_to_end(&mut encrypted_data)
+        .expect("Failed to read data from file");
+
+    let mut decrypted_data: Vec<u8> = Vec::new();
+    symmetric_decrypt(
+        &data_nonce,
+        &encrypted_data,
+        &decrypted_key,
+        &mut decrypted_data,
+    );
+
+    let mut file = std::fs::File::create(filepath).expect("Failed to open file");
+    file.write_all(&decrypted_data)
+        .expect("Failed to write data to file");
 }
