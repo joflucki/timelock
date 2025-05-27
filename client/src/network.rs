@@ -1,23 +1,20 @@
 use anyhow::Result;
 use native_tls::{TlsConnector, TlsStream};
-use shared::messages::{ClientMessage, ServerMessage};
+use shared::frames::{ClientFrame, ServerFrame};
 use std::{
     io::{Read, Write},
     net::TcpStream,
 };
 
 pub fn connect() -> Result<TlsStream<TcpStream>> {
-    let cert = native_tls::Certificate::from_pem(include_bytes!("server.crt")).unwrap();
-    let connector = TlsConnector::builder()
-        .add_root_certificate(cert)
-        .build()
-        .unwrap();
+    let cert = native_tls::Certificate::from_pem(include_bytes!("server.crt"))?;
+    let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
 
-    let stream = TcpStream::connect("localhost:8443").unwrap();
-    Ok(connector.connect("timelock.ch", stream).unwrap())
+    let stream = TcpStream::connect("localhost:8443")?;
+    Ok(connector.connect("timelock.ch", stream)?)
 }
 
-pub fn write(stream: &mut TlsStream<TcpStream>, message: ClientMessage) -> Result<()> {
+pub fn write(stream: &mut TlsStream<TcpStream>, message: ClientFrame) -> Result<()> {
     let mut encoded = bincode::serialize(&message)?;
     let mut length = (encoded.len() as u32).to_be_bytes();
     stream.write_all(&mut length)?;
@@ -25,12 +22,12 @@ pub fn write(stream: &mut TlsStream<TcpStream>, message: ClientMessage) -> Resul
     Ok(())
 }
 
-pub fn read(stream: &mut TlsStream<TcpStream>) -> Result<ServerMessage> {
+pub fn read(stream: &mut TlsStream<TcpStream>) -> Result<ServerFrame> {
     let mut length: [u8; 4] = [0; 4];
     stream.read_exact(&mut length)?;
     let length = u32::from_be_bytes(length);
     let mut buffer = vec![0; length as usize];
     stream.read_exact(&mut buffer)?;
-    let message: ServerMessage = bincode::deserialize(&buffer)?;
+    let message: ServerFrame = bincode::deserialize(&buffer)?;
     Ok(message)
 }

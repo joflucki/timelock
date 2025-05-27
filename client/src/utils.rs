@@ -1,6 +1,10 @@
+use anyhow::Result;
+use chrono::{DateTime, NaiveDateTime, Utc};
 use directories::ProjectDirs;
+use shared::models::MessagePreview;
 use std::fs::File;
-use std::io::{Read, Result, Write};
+use std::io::{Read, Write};
+use tabled::Table;
 
 /// Loads cryptographic keys from the default file.
 ///
@@ -85,4 +89,16 @@ pub fn delete_username() -> Result<()> {
     let path = dir.data_dir().join("username");
     std::fs::remove_file(path)?;
     Ok(())
+}
+
+pub fn parse_datetime(str: &str) -> Result<DateTime<Utc>> {
+    Ok(NaiveDateTime::parse_from_str(str, "%Y-%m-%d %H:%M:%S")?.and_utc())
+}
+pub fn display_users(users: Vec<String>) {
+    let table = Table::new(users);
+    println!("{}", table)
+}
+pub fn display_messages(messages: Vec<MessagePreview>) {
+    let table = Table::new(messages);
+    println!("{}", table)
 }

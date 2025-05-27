@@ -1,10 +1,10 @@
-/// This module defines the messages exchanged between the client and server.
-use crate::crypto::*;
+/// This module defines the network messages exchanged between the client and server.
+use crate::{crypto::*, models::MessagePreview};
 use serde::{Deserialize, Serialize};
 
-/// Client messages sent to the server
+/// Client network frame sent to the server
 #[derive(Serialize, Deserialize, Debug)]
-pub enum ClientMessage {
+pub enum ClientFrame {
     Identify {
         username: String,
         public_key: [u8; KEY_SIZE],
@@ -60,9 +60,9 @@ pub enum ClientMessage {
     },
 }
 
-/// Server messages sent to the client
+/// Server network frame sent to the client
 #[derive(Serialize, Deserialize, Debug)]
-pub enum ServerMessage {
+pub enum ServerFrame {
     IdentifyResponse {
         ok: bool,
         server_public_key: [u8; KEY_SIZE],
@@ -85,10 +85,10 @@ pub enum ServerMessage {
         ok: bool,
     },
     ListMessagesResponse {
-        messages: Vec<(String, String, [u8; 8], u64)>, // (message_id, sender_username, timestamp, filesize in bytes)
+        message_previews: Vec<MessagePreview>,
     },
     ListUsersResponse {
-        users: Vec<String>,
+        usernames: Vec<String>,
     },
     DownloadMessageResponse {
         sender_public_key: [u8; KEY_SIZE],

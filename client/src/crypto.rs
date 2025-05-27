@@ -1,33 +1,47 @@
 //! This module wraps libsodium bindings
 //! and offers a pragmatic Rust API for cryptographic operations.
+use anyhow::{anyhow, Result};
 use libc;
 use libsodium_sys;
 use shared::crypto::*;
 use std::ffi::CString;
 
-pub fn generate_keypair(public_key: &mut [u8; KEY_SIZE], private_key: &mut [u8; KEY_SIZE]) {
+pub fn generate_keypair(
+    public_key: &mut [u8; KEY_SIZE],
+    private_key: &mut [u8; KEY_SIZE],
+) -> Result<()> {
     let ret = unsafe {
         libsodium_sys::crypto_box_keypair(public_key.as_mut_ptr(), private_key.as_mut_ptr())
     };
-    if ret != 0 {
-        panic!("Keypair generation failed");
+    match ret {
+        0 => Ok(()),
+        _ => Err(anyhow!("Keypair generation failed")),
     }
 }
 
-pub fn derive_public_key(public_key: &mut [u8; KEY_SIZE], private_key: &[u8; KEY_SIZE]) {
+pub fn derive_public_key(
+    public_key: &mut [u8; KEY_SIZE],
+    private_key: &[u8; KEY_SIZE],
+) -> Result<()> {
     let ret = unsafe {
         libsodium_sys::crypto_scalarmult_base(public_key.as_mut_ptr(), private_key.as_ptr())
     };
-    if ret != 0 {
-        panic!("Public key derivation failed");
+
+    match ret {
+        0 => Ok(()),
+        _ => Err(anyhow!("Public key derivation failed")),
     }
 }
 
 /// Derives a subkey from a master key.
-pub fn derive_key(master_key: &[u8; KEY_SIZE], sub_key: &mut [u8; KEY_SIZE], context: &str) {
-    let ctx_cstr = CString::new(context).expect("Invalid context string");
+pub fn derive_key(
+    master_key: &[u8; KEY_SIZE],
+    sub_key: &mut [u8; KEY_SIZE],
+    context: &str,
+) -> Result<()> {
+    let ctx_cstr = CString::new(context)?;
 
-    let result = unsafe {
+    let ret = unsafe {
         libsodium_sys::crypto_kdf_hkdf_sha256_expand(
             sub_key.as_mut_ptr(),
             32,
@@ -37,14 +51,19 @@ pub fn derive_key(master_key: &[u8; KEY_SIZE], sub_key: &mut [u8; KEY_SIZE], con
         )
     };
 
-    if result != 0 {
-        panic!("Key derivation failed");
+    match ret {
+        0 => Ok(()),
+        _ => Err(anyhow!("Key derivation failed")),
     }
 }
 
 /// Hashes a password into a key.
-pub fn hash_password(hash: &mut [u8; KEY_SIZE], password: &str, salt: &[u8; SALT_SIZE]) {
-    let c_password = CString::new(password).expect("CString::new failed");
+pub fn hash_password(
+    hash: &mut [u8; KEY_SIZE],
+    password: &str,
+    salt: &[u8; SALT_SIZE],
+) -> Result<()> {
+    let c_password = CString::new(password)?;
     let ret = unsafe {
         libsodium_sys::crypto_pwhash(
             hash.as_mut_ptr(),
@@ -57,15 +76,18 @@ pub fn hash_password(hash: &mut [u8; KEY_SIZE], password: &str, salt: &[u8; SALT
             libsodium_sys::crypto_pwhash_ALG_DEFAULT as i32,
         )
     };
-    if ret != 0 {
-        panic!("Password hashing failed");
+
+    match ret {
+        0 => Ok(()),
+        _ => Err(anyhow!("Password hashing failed")),
     }
 }
 
-pub fn random_buffer(buffer: &mut [u8]) {
+pub fn random_buffer(buffer: &mut [u8]) -> Result<()> {
     unsafe {
         libsodium_sys::randombytes_buf(buffer.as_mut_ptr() as *mut libc::c_void, buffer.len());
     }
+    Ok(())
 }
 
 pub fn symmetric_encrypt(
@@ -73,7 +95,7 @@ pub fn symmetric_encrypt(
     plaintext: &[u8],
     key: &[u8; KEY_SIZE],
     ciphertext: &mut [u8],
-) {
+) -> Result<()> {
     let ret = unsafe {
         libsodium_sys::crypto_stream_xchacha20_xor(
             ciphertext.as_mut_ptr(),
@@ -83,8 +105,10 @@ pub fn symmetric_encrypt(
             key.as_ptr(),
         )
     };
-    if ret != 0 {
-        panic!("Encryption failed");
+
+    match ret {
+        0 => Ok(()),
+        _ => Err(anyhow!("Symmetric encryption failed")),
     }
 }
 
@@ -93,7 +117,7 @@ pub fn symmetric_decrypt(
     ciphertext: &[u8],
     key: &[u8; KEY_SIZE],
     plaintext: &mut [u8],
-) {
+) -> Result<()> {
     let ret = unsafe {
         libsodium_sys::crypto_stream_xchacha20_xor(
             plaintext.as_mut_ptr(),
@@ -103,8 +127,10 @@ pub fn symmetric_decrypt(
             key.as_ptr(),
         )
     };
-    if ret != 0 {
-        panic!("Decryption failed");
+
+    match ret {
+        0 => Ok(()),
+        _ => Err(anyhow!("Symmetric decryption failed")),
     }
 }
 
@@ -117,7 +143,8 @@ pub fn authenticate(mac: &mut [u8; MAC_SIZE], key: &[u8; KEY_SIZE], message: &[u
             key.as_ptr(),
         )
     };
+
     if ret != 0 {
-        panic!("Authentication failed");
+        panic!("Computation of authentication tag failed");
     }
 }

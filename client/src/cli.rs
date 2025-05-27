@@ -25,7 +25,7 @@ pub enum Commands {
         #[arg(long)]
         recipient_username: String,
         #[arg(long)]
-        timestamp: String,
+        datetime: String,
     },
     List {
         #[command(subcommand)]

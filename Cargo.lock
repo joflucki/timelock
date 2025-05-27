@@ -1104,10 +1104,12 @@ dependencies = [
 name = "shared"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "chrono",
  "libc",
  "libsodium-sys-stable",
  "serde",
+ "tabled",
 ]
 
 [[package]]

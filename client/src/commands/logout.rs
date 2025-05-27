@@ -1,6 +1,8 @@
 use crate::utils;
+use anyhow::Result;
 
-pub fn logout() {
-    utils::delete_keys().expect("Error deleting keys");
-    utils::delete_username().expect("Error deleting username");
+pub fn logout() -> Result<()> {
+    utils::delete_keys()?;
+    utils::delete_username()?;
+    Ok(())
 }
