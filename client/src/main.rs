@@ -4,7 +4,7 @@ mod crypto;
 mod network;
 mod utils;
 
-use chrono::DateTime;
+use chrono::NaiveDateTime;
 use clap::Parser;
 use cli::*;
 use std::path::Path;
@@ -13,7 +13,7 @@ fn main() {
     // Initialize the cryptography module.
     // If it fails, nothing works
     // and we should panic
-    let ret = crypto::init();
+    let ret = shared::crypto::init();
     if ret != 0 {
         panic!("Cryptography module initialization failed")
     }
@@ -29,7 +29,9 @@ fn main() {
         } => commands::send(
             Path::new(filepath),
             recipient_username,
-            &DateTime::parse_from_str(timestamp, "%+").expect("Invalid timestamp format"),
+            &NaiveDateTime::parse_from_str(timestamp, "%Y-%m-%d %H:%M:%S")
+                .expect("Invalid date-time format")
+                .and_utc(),
         ),
         Commands::List { list_command } => match list_command {
             ListCommands::Users => commands::list_users(),

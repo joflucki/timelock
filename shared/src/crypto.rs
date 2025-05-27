@@ -5,6 +5,10 @@ pub const MAC_SIZE: usize = libsodium_sys::crypto_auth_BYTES as usize;
 pub const KEY_SIZE: usize = libsodium_sys::crypto_stream_xchacha20_KEYBYTES as usize;
 pub const SALT_SIZE: usize = libsodium_sys::crypto_pwhash_SALTBYTES as usize;
 
+pub fn init() -> i32 {
+    unsafe { libsodium_sys::sodium_init() }
+}
+
 pub fn verify_authentication(mac: &[u8; MAC_SIZE], key: &[u8; KEY_SIZE], message: &[u8]) -> bool {
     let ret = unsafe {
         libsodium_sys::crypto_auth_verify(

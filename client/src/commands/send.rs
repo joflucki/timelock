@@ -2,14 +2,14 @@ use crate::crypto::*;
 use crate::network;
 use crate::utils;
 use chrono::DateTime;
-use chrono::FixedOffset;
+use chrono::Utc;
 use shared::crypto::*;
 use shared::messages::ClientMessage;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-pub fn send(filepath: &Path, recipient_username: &String, datetime: &DateTime<FixedOffset>) {
+pub fn send(filepath: &Path, recipient_username: &String, datetime: &DateTime<Utc>) {
     // Connect to the server
     let mut stream: native_tls::TlsStream<std::net::TcpStream> =
         network::connect().expect("Failed to connect to server");
@@ -18,7 +18,7 @@ pub fn send(filepath: &Path, recipient_username: &String, datetime: &DateTime<Fi
     network::write(
         &mut stream,
         shared::messages::ClientMessage::GetPublicKey {
-            id: recipient_username.clone(),
+            username: recipient_username.clone(),
         },
     )
     .expect("Error sending public key request to server");

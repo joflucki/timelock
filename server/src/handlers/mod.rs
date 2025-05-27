@@ -1,0 +1,21 @@
+mod download_message;
+mod get_credentials;
+mod get_public_key;
+mod get_salt;
+mod identify;
+mod list_messages;
+mod list_users;
+mod reset_password;
+mod send_message;
+mod unlock_message;
+
+pub use download_message::download_message;
+pub use get_credentials::get_credentials;
+pub use get_public_key::get_public_key;
+pub use get_salt::get_salt;
+pub use identify::identify;
+pub use list_messages::list_messages;
+pub use list_users::list_users;
+pub use reset_password::reset_password;
+pub use send_message::send_message;
+pub use unlock_message::unlock_message;

@@ -5,10 +5,6 @@ use libsodium_sys;
 use shared::crypto::*;
 use std::ffi::CString;
 
-pub fn init() -> i32 {
-    unsafe { libsodium_sys::sodium_init() }
-}
-
 pub fn generate_keypair(public_key: &mut [u8; KEY_SIZE], private_key: &mut [u8; KEY_SIZE]) {
     let ret = unsafe {
         libsodium_sys::crypto_box_keypair(public_key.as_mut_ptr(), private_key.as_mut_ptr())

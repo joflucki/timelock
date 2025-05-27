@@ -29,7 +29,7 @@ pub enum ClientMessage {
         mac: [u8; MAC_SIZE],
     },
     GetPublicKey {
-        id: String,
+        username: String,
     },
     SendMessage {
         sender_username: String,
