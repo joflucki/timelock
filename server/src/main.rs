@@ -13,7 +13,7 @@ use std::thread;
 fn main() -> Result<()> {
     shared::crypto::init()?;
     let identity =
-        Identity::from_pkcs8(include_bytes!("server.pem"), include_bytes!("server.key"))?;
+        Identity::from_pkcs8(include_bytes!("cert.pem"), include_bytes!("key.pem"))?;
     let listener = TcpListener::bind("0.0.0.0:8443")?;
     let acceptor = TlsAcceptor::new(identity)?;
     let acceptor = Arc::new(acceptor);

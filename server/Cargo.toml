@@ -11,3 +11,4 @@ directories = "6.0.0"
 native-tls = { version = "0.2.14", features = ["vendored"] }
 shared = { path = "../shared" }
 sled = "0.34.7"
+subtle = "2.6.1"

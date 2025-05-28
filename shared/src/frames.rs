@@ -100,4 +100,7 @@ pub enum ServerFrame {
         key_nonce: [u8; NONCE_SIZE],
         key_mac: [u8; MAC_SIZE],
     },
+    Error {
+        message: String,
+    },
 }

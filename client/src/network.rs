@@ -7,7 +7,7 @@ use std::{
 };
 
 pub fn connect() -> Result<TlsStream<TcpStream>> {
-    let cert = native_tls::Certificate::from_pem(include_bytes!("server.crt"))?;
+    let cert = native_tls::Certificate::from_pem(include_bytes!("cert.pem"))?;
     let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
 
     let stream = TcpStream::connect("localhost:8443")?;
