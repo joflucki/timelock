@@ -46,9 +46,9 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
         stream.read_exact(&mut buffer)?;
         let message: shared::frames::ClientFrame = bincode::deserialize(&buffer)?;
 
-        match message {
+        let result = match message {
             shared::frames::ClientFrame::GetCredentials { username, auth_key } => {
-                get_credentials(stream, &username, &auth_key)?
+                get_credentials(stream, &username, &auth_key)
             }
             shared::frames::ClientFrame::Identify {
                 username,
@@ -65,8 +65,8 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
                 &encrypted_private_key,
                 &salt,
                 &nonce,
-            )?,
-            shared::frames::ClientFrame::GetSalt { username } => get_salt(stream, &username)?,
+            ),
+            shared::frames::ClientFrame::GetSalt { username } => get_salt(stream, &username),
             shared::frames::ClientFrame::ResetPassword {
                 username,
                 new_auth_key: auth_key,
@@ -82,9 +82,9 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
                 &salt,
                 &nonce,
                 &old_auth_key,
-            )?,
+            ),
             shared::frames::ClientFrame::GetPublicKey { username } => {
-                get_public_key(stream, &username)?
+                get_public_key(stream, &username)
             }
             shared::frames::ClientFrame::SendMessage {
                 sender_username,
@@ -109,23 +109,32 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
                 &data_nonce,
                 &data_mac,
                 &auth_key,
-            )?,
+            ),
             shared::frames::ClientFrame::ListMessages {
                 username,
                 auth_key: mac,
-            } => list_messages(stream, &username, &mac)?,
+            } => list_messages(stream, &username, &mac),
             shared::frames::ClientFrame::DownloadMessage {
                 username,
                 message_id,
                 auth_key,
-            } => download_message(stream, &username, &message_id, &auth_key)?,
+            } => download_message(stream, &username, &message_id, &auth_key),
             shared::frames::ClientFrame::UnlockMessage {
                 username,
                 message_id,
                 auth_key,
-            } => unlock_message(stream, &username, &message_id, &auth_key)?,
-            shared::frames::ClientFrame::ListUsers {} => list_users(stream)?,
+            } => unlock_message(stream, &username, &message_id, &auth_key),
+            shared::frames::ClientFrame::ListUsers {} => list_users(stream),
             shared::frames::ClientFrame::Disconnect {} => return Ok(()),
+        };
+        if let Err(e) = result {
+            network::write(
+                stream,
+                shared::frames::ServerFrame::Error {
+                    message: e.to_string(),
+                },
+            )?;
+            return Err(e);
         }
     }
 }

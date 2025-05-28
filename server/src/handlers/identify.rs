@@ -23,6 +23,9 @@ pub fn identify(
         }
     };
     let path = dir.data_dir().join(username);
+    if path.try_exists()? {
+        return Err(anyhow!("Username already in use"));
+    }
     let db = sled::open(path)?;
     db.insert("public_key", public_key)?;
     db.insert("auth_key", auth_key)?;

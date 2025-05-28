@@ -24,12 +24,6 @@ pub fn get_credentials(
 
     let stored_auth_key: [u8; KEY_SIZE] = db.get("auth_key")?.unwrap().as_ref().try_into()?;
     if !bool::from(stored_auth_key.ct_eq(auth_key)) {
-        network::write(
-            stream,
-            shared::frames::ServerFrame::Error {
-                message: "Authentication invalid".to_string(),
-            },
-        )?;
         return Err(anyhow!("Authentication invalid"));
     }
 
