@@ -1,8 +1,8 @@
 mod handlers;
 mod network;
+mod utils;
 
 use anyhow::{anyhow, Result};
-use chrono::DateTime;
 use handlers::*;
 use native_tls::{Identity, TlsAcceptor, TlsStream};
 use std::io::Read;
@@ -101,7 +101,7 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
                 stream,
                 &sender_username,
                 &recipient_username,
-                &DateTime::from_timestamp(i64::from_be_bytes(timestamp), 0).unwrap(),
+                timestamp,
                 &encrypted_key,
                 &key_nonce,
                 &key_mac,

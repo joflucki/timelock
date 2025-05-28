@@ -1,6 +1,5 @@
-use crate::network;
+use crate::{network, utils};
 use anyhow::{anyhow, Result};
-use directories::ProjectDirs;
 use native_tls::TlsStream;
 use shared::crypto::*;
 use std::net::TcpStream;
@@ -15,26 +14,19 @@ pub fn reset_password(
     nonce: &[u8; NONCE_SIZE],
     old_auth_key: &[u8; KEY_SIZE],
 ) -> Result<()> {
-    let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Server") {
-        Some(dir) => dir,
-        None => {
-            return Err(anyhow!(
-                "No valid home directory path could be retrieved from the operating system"
-            ))
-        }
-    };
-    let path = dir.data_dir().join(username).join("user_data");
-    let db = sled::open(path)?;
-
-    let stored_auth_key: [u8; KEY_SIZE] = db.get("auth_key")?.unwrap().as_ref().try_into()?;
+    let (stored_auth_key, _, public_key, _, _) = utils::load_credentials(username)?;
     if !bool::from(stored_auth_key.ct_eq(old_auth_key)) {
         return Err(anyhow!("Authentication invalid"));
     }
 
-    db.insert("auth_key", new_auth_key)?;
-    db.insert("encrypted_private_key", encrypted_private_key)?;
-    db.insert("salt", salt)?;
-    db.insert("nonce", nonce)?;
+    utils::save_credentials(
+        username,
+        new_auth_key,
+        encrypted_private_key,
+        &public_key,
+        nonce,
+        salt,
+    )?;
 
     network::write(
         stream,

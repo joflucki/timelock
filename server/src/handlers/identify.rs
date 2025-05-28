@@ -1,9 +1,9 @@
-use crate::network;
+use crate::{network, utils};
 use anyhow::{anyhow, Result};
 use directories::ProjectDirs;
 use native_tls::TlsStream;
 use shared::{crypto::*, frames::ServerFrame};
-use std::net::TcpStream;
+use std::{fs, net::TcpStream};
 
 pub fn identify(
     stream: &mut TlsStream<TcpStream>,
@@ -26,13 +26,17 @@ pub fn identify(
     if path.try_exists()? {
         return Err(anyhow!("Username already in use"));
     }
-    let path = path.join("user_data");
-    let db = sled::open(path)?;
-    db.insert("public_key", public_key)?;
-    db.insert("auth_key", auth_key)?;
-    db.insert("encrypted_private_key", encrypted_private_key)?;
-    db.insert("salt", salt)?;
-    db.insert("nonce", nonce)?;
+
+    utils::save_credentials(
+        username,
+        auth_key,
+        encrypted_private_key,
+        public_key,
+        nonce,
+        salt,
+    )?;
+
+    fs::create_dir_all(path.join("messages"))?;
 
     let frame = ServerFrame::IdentifyResponse {};
     network::write(stream, frame)?;

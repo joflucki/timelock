@@ -15,7 +15,7 @@ pub fn list_users(stream: &mut TlsStream<TcpStream>) -> Result<()> {
         }
     };
     let file_list: Vec<String> = fs::read_dir(dir.data_dir())?
-        .map(|result| result.expect(""))
+        .map(|result| result.expect("Could not list file"))
         .map(|entry| entry.file_name().to_str().unwrap().to_owned())
         .collect();
 

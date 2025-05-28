@@ -34,7 +34,7 @@ pub enum ClientFrame {
     SendMessage {
         sender_username: String,
         recipient_username: String,
-        timestamp: [u8; 8],
+        timestamp: u64,
         encrypted_key: [u8; KEY_SIZE],
         key_nonce: [u8; NONCE_SIZE],
         key_mac: [u8; MAC_SIZE],
@@ -86,7 +86,7 @@ pub enum ServerFrame {
     DownloadMessageResponse {
         sender_public_key: [u8; KEY_SIZE],
         encrypted_data: Vec<u8>,
-        data_nonce: [u8; KEY_SIZE],
+        data_nonce: [u8; NONCE_SIZE],
         data_mac: [u8; MAC_SIZE],
     },
     UnlockMessageResponse {

@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Result};
 use directories::ProjectDirs;
+use shared::crypto::KEY_SIZE;
 use std::fs::{self, File};
 use std::io::{Read, Write};
 
@@ -7,7 +8,13 @@ use std::io::{Read, Write};
 ///
 /// The keys are expected to be in a specific order:
 /// master_key, auth_key, enc_key, private_key, public_key, server_public_key
-pub fn load_keys() -> Result<([u8; 32], [u8; 32], [u8; 32], [u8; 32], [u8; 32])> {
+pub fn load_keys() -> Result<(
+    [u8; KEY_SIZE],
+    [u8; KEY_SIZE],
+    [u8; KEY_SIZE],
+    [u8; KEY_SIZE],
+    [u8; KEY_SIZE],
+)> {
     let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Client") {
         Some(dir) => dir,
         None => {
@@ -18,13 +25,12 @@ pub fn load_keys() -> Result<([u8; 32], [u8; 32], [u8; 32], [u8; 32], [u8; 32])>
     };
     let mut file = File::open(dir.data_dir().join("credentials"))?;
 
-    let mut master_key: [u8; 32] = [0; 32];
-    let mut auth_key: [u8; 32] = [0; 32];
-    let mut enc_key: [u8; 32] = [0; 32];
-    let mut private_key: [u8; 32] = [0; 32];
-    let mut public_key: [u8; 32] = [0; 32];
+    let mut master_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
+    let mut auth_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
+    let mut enc_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
+    let mut private_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
+    let mut public_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
 
-    // Add other key buffers here
     file.read_exact(&mut master_key)?;
     file.read_exact(&mut auth_key)?;
     file.read_exact(&mut enc_key)?;
@@ -37,11 +43,11 @@ pub fn load_keys() -> Result<([u8; 32], [u8; 32], [u8; 32], [u8; 32], [u8; 32])>
 
 /// Saves cryptographic keys to the default file.
 pub fn save_keys(
-    master_key: &[u8; 32],
-    auth_key: &[u8; 32],
-    enc_key: &[u8; 32],
-    private_key: &[u8; 32],
-    public_key: &[u8; 32],
+    master_key: &[u8; KEY_SIZE],
+    auth_key: &[u8; KEY_SIZE],
+    enc_key: &[u8; KEY_SIZE],
+    private_key: &[u8; KEY_SIZE],
+    public_key: &[u8; KEY_SIZE],
 ) -> Result<()> {
     let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Client") {
         Some(dir) => dir,
@@ -60,7 +66,6 @@ pub fn save_keys(
     file.write_all(private_key)?;
     file.write_all(public_key)?;
 
-    // Add other keys here if you have more
     Ok(())
 }
 

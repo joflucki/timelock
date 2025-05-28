@@ -3,6 +3,7 @@ use crate::network;
 use crate::utils;
 use anyhow::{anyhow, Result};
 use chrono::NaiveDateTime;
+use chrono::Utc;
 use shared::crypto::*;
 use shared::frames::ClientFrame;
 use std::fs::File;
@@ -12,6 +13,9 @@ use std::path::Path;
 pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -> Result<()> {
     let filepath = Path::new(filepath);
     let datetime = NaiveDateTime::parse_from_str(datetime, "%Y-%m-%d %H:%M:%S")?.and_utc();
+    if datetime.timestamp() < Utc::now().timestamp() {
+        return Err(anyhow!("A message can not unlock in the past."));
+    }
 
     // Connect to the server
     let mut stream: native_tls::TlsStream<std::net::TcpStream> = network::connect()?;
@@ -88,7 +92,7 @@ pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -
         ClientFrame::SendMessage {
             sender_username: username.clone(),
             recipient_username: recipient_username.clone(),
-            timestamp: datetime.timestamp().to_be_bytes(),
+            timestamp: datetime.timestamp() as u64,
             encrypted_key: encrypted_one_time_key,
             key_nonce,
             key_mac,
