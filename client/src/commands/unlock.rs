@@ -5,10 +5,8 @@ use anyhow::{anyhow, Result};
 use shared::crypto::*;
 use std::io::Read;
 use std::io::Write;
-use std::path::Path;
 
 pub fn unlock(filepath: &String, message_id: &String) -> Result<()> {
-    let filepath = Path::new(filepath);
     let username = utils::load_username()?;
     let (_, auth_key, _, private_key, _) = utils::load_keys()?;
 
@@ -61,7 +59,7 @@ pub fn unlock(filepath: &String, message_id: &String) -> Result<()> {
     file.read_exact(&mut data_nonce)?;
     file.read_to_end(&mut encrypted_data)?;
 
-    let mut decrypted_data: Vec<u8> = Vec::new();
+    let mut decrypted_data: Vec<u8> = vec![0; encrypted_data.len()];
     symmetric_decrypt(
         &data_nonce,
         &encrypted_data,

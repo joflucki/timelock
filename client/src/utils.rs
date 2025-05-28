@@ -7,7 +7,7 @@ use std::io::{Read, Write};
 /// Loads cryptographic keys from the default file.
 ///
 /// The keys are expected to be in a specific order:
-/// master_key, auth_key, enc_key, private_key, public_key, server_public_key
+/// master_key, auth_key, enc_key, private_key, public_key
 pub fn load_keys() -> Result<(
     [u8; KEY_SIZE],
     [u8; KEY_SIZE],

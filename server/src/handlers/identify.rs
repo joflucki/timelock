@@ -36,7 +36,8 @@ pub fn identify(
         salt,
     )?;
 
-    fs::create_dir_all(path.join("messages"))?;
+    let path = dir.data_dir().join(username).join("messages");
+    fs::create_dir(path)?;
 
     let frame = ServerFrame::IdentifyResponse {};
     network::write(stream, frame)?;

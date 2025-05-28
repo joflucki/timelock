@@ -64,32 +64,34 @@ pub fn send_message(
         return Err(anyhow!("Recipient does not exist"));
     }
 
+    let uuid = Uuid::new_v4().to_string();
     let path = dir
         .data_dir()
         .join(recipient_username)
         .join("messages")
-        .join(Uuid::new_v4().to_string());
+        .join(uuid.clone());
     fs::create_dir_all(path)?;
+    print!("Created message folder");
 
     let path = dir
         .data_dir()
         .join(recipient_username)
         .join("messages")
-        .join(Uuid::new_v4().to_string())
+        .join(uuid.clone())
         .join("metadata");
-
-    let mut file = File::open(path)?;
+    let mut file = File::create(path)?;
     file.write_all(&bincode::serialize(&metadata)?)?;
+    print!("Wrote metadata");
 
     let path = dir
         .data_dir()
         .join(recipient_username)
         .join("messages")
-        .join(Uuid::new_v4().to_string())
+        .join(uuid.clone())
         .join("data");
-
-    let mut file = File::open(path)?;
+    let mut file = File::create(path)?;
     file.write_all(&bincode::serialize(&data)?)?;
+    print!("Wrote data");
 
     network::write(stream, shared::frames::ServerFrame::SendMessageResponse {})?;
 

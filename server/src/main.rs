@@ -3,15 +3,27 @@ mod network;
 mod utils;
 
 use anyhow::{anyhow, Result};
+use directories::ProjectDirs;
 use handlers::*;
 use native_tls::{Identity, TlsAcceptor, TlsStream};
 use std::io::Read;
 use std::net::{TcpListener, TcpStream};
 use std::sync::Arc;
-use std::thread;
+use std::{fs, thread};
 
 fn main() -> Result<()> {
     shared::crypto::init()?;
+
+    let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Server") {
+        Some(dir) => dir,
+        None => {
+            return Err(anyhow!(
+                "No valid home directory path could be retrieved from the operating system"
+            ))
+        }
+    };
+    fs::create_dir_all(dir.data_dir())?;
+
     let identity = Identity::from_pkcs8(include_bytes!("cert.pem"), include_bytes!("key.pem"))?;
     let listener = TcpListener::bind("0.0.0.0:8443")?;
     let acceptor = TlsAcceptor::new(identity)?;

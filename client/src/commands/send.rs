@@ -8,10 +8,8 @@ use shared::crypto::*;
 use shared::frames::ClientFrame;
 use std::fs::File;
 use std::io::Read;
-use std::path::Path;
 
 pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -> Result<()> {
-    let filepath = Path::new(filepath);
     let datetime = NaiveDateTime::parse_from_str(datetime, "%Y-%m-%d %H:%M:%S")?.and_utc();
     if datetime.timestamp() < Utc::now().timestamp() {
         return Err(anyhow!("A message can not unlock in the past."));
@@ -74,9 +72,8 @@ pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -
 
     // Encrypt the file data
     let mut data: Vec<u8> = Vec::new();
-    File::open(filepath)?.read(&mut data)?;
-
-    let mut encrypted_data: Vec<u8> = Vec::new();
+    File::open(filepath)?.read_to_end(&mut data)?;
+    let mut encrypted_data: Vec<u8> = vec![0; data.len()]; // Must pre-allocate for libsodium unsafe code
     symmetric_encrypt(&data_nonce, &data, &one_time_key, &mut encrypted_data)?;
 
     // Authenticate the encrypted message and its nonce
@@ -102,7 +99,6 @@ pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -
             auth_key: auth_key,
         },
     )?;
-
     match network::read(&mut stream)? {
         shared::frames::ServerFrame::SendMessageResponse {} => {}
         shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),

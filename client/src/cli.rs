@@ -21,9 +21,9 @@ pub enum Commands {
     },
     Send {
         #[arg(long)]
-        filepath: String,
+        file: String,
         #[arg(long)]
-        recipient_username: String,
+        recipient: String,
         #[arg(long)]
         datetime: String,
     },
@@ -33,12 +33,12 @@ pub enum Commands {
     },
     Download {
         #[arg(long)]
-        filepath: String,
+        file: String,
         file_id: String,
     },
     Unlock {
         #[arg(long)]
-        filepath: String,
+        file: String,
         #[arg(long)]
         file_id: String,
     },

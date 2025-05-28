@@ -15,8 +15,6 @@ pub fn signup(username: &String) -> Result<()> {
     // Prompt for password
     let password = rpassword::prompt_password("Your password: ")?.to_string();
 
-    println!("Computing your cryptographic keys...");
-
     // Generate salt
     let mut salt: [u8; SALT_SIZE] = [0; SALT_SIZE];
     random_buffer(&mut salt)?;
@@ -39,7 +37,7 @@ pub fn signup(username: &String) -> Result<()> {
     let mut private_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
     let mut public_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
 
-    generate_keypair(&mut private_key, &mut public_key)?;
+    generate_keypair(&mut public_key, &mut private_key)?;
 
     // Generate nonce
     let mut nonce: [u8; NONCE_SIZE] = [0; NONCE_SIZE];
@@ -48,8 +46,6 @@ pub fn signup(username: &String) -> Result<()> {
     // Encrypt private key
     let mut encrypted_private_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
     symmetric_encrypt(&nonce, &private_key, &enc_key, &mut encrypted_private_key)?;
-
-    println!("Sending cryptographic keys to server...");
 
     // Connect to the server
     let mut stream = network::connect()?;
@@ -61,7 +57,7 @@ pub fn signup(username: &String) -> Result<()> {
             username: username.clone(),
             public_key,
             auth_key,
-            encrypted_private_key: private_key,
+            encrypted_private_key: encrypted_private_key,
             salt,
             nonce: nonce,
         },
@@ -75,7 +71,6 @@ pub fn signup(username: &String) -> Result<()> {
 
     utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
     utils::save_username(username)?;
-    println!("Sign up successful!");
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
     Ok(())
 }

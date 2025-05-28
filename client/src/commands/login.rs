@@ -65,7 +65,7 @@ pub fn login(username: &String) -> Result<()> {
     symmetric_decrypt(
         &nonce,
         &encrypted_private_key,
-        &auth_key,
+        &enc_key,
         &mut decrypted_private_key,
     )?;
 

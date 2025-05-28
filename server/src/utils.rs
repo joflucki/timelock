@@ -7,6 +7,7 @@ use anyhow::{anyhow, Result};
 use directories::ProjectDirs;
 use shared::crypto::{KEY_SIZE, NONCE_SIZE, SALT_SIZE};
 
+/// Returns (`auth_key`, `encrypted_private_key`, `public_key`, `nonce`, `salt`)
 pub fn load_credentials(
     username: &str,
 ) -> Result<(
@@ -51,7 +52,7 @@ pub fn save_credentials(
     nonce: &[u8; NONCE_SIZE],
     salt: &[u8; SALT_SIZE],
 ) -> Result<()> {
-    let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Client") {
+    let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Server") {
         Some(dir) => dir,
         None => {
             return Err(anyhow!(
@@ -59,7 +60,7 @@ pub fn save_credentials(
             ))
         }
     };
-    fs::create_dir_all(dir.data_dir())?;
+    fs::create_dir_all(dir.data_dir().join(username))?;
     let mut file = File::create(dir.data_dir().join(username).join("credentials"))?;
 
     file.write_all(auth_key)?;

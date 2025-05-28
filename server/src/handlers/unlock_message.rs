@@ -40,7 +40,11 @@ pub fn unlock_message(
     let metadata: MessageMetadataFile = bincode::deserialize(&bytes)?;
 
     if (Utc::now().timestamp() as u64) < metadata.unlock_timestamp {
-        return Err(anyhow!("Message can not be unlocked at this time"));
+        return Err(anyhow!(
+            "Message can not be unlocked at this time. {} vs {}",
+            Utc::now().timestamp() as u64,
+            metadata.unlock_timestamp
+        ));
     };
 
     let (_, _, sender_public_key, _, _) = utils::load_credentials(&metadata.sender_username)?;
