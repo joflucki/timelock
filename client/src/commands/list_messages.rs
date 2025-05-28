@@ -26,5 +26,8 @@ pub fn list_messages() -> Result<()> {
     let mut table = Table::new(messages);
     table.with(Style::modern_rounded());
     println!("{}", table);
+
+    network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+    
     Ok(())
 }

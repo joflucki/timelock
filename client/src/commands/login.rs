@@ -81,5 +81,7 @@ pub fn login(username: &String) -> Result<()> {
     )?;
     utils::save_username(username)?;
 
+    network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+
     Ok(())
 }

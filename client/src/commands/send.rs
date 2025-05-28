@@ -103,8 +103,10 @@ pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -
         shared::frames::ServerFrame::SendMessageResponse { ok } => ok,
         _ => return Err(anyhow!("Unexpected answer from server")),
     } {
+        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
         Ok(())
     } else {
+        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
         Err(anyhow!("Server refused message"))
     }
 }

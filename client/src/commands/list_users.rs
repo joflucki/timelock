@@ -15,5 +15,8 @@ pub fn list_users() -> Result<()> {
     let mut table = Table::new(usernames);
     table.with(Style::modern_rounded());
     println!("{}", table);
+
+    network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+    
     Ok(())
 }

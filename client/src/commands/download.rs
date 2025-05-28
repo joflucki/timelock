@@ -49,5 +49,7 @@ pub fn download(filepath: &String, message_id: &String) -> Result<()> {
     file.write_all(&data_nonce)?;
     file.write_all(&encrypted_data)?;
 
+    network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+
     Ok(())
 }

@@ -58,6 +58,7 @@ pub enum ClientFrame {
         message_id: String,
         auth_key: [u8; KEY_SIZE],
     },
+    Disconnect {},
 }
 
 /// Server network frame sent to the client

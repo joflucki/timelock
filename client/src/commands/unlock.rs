@@ -71,5 +71,7 @@ pub fn unlock(filepath: &String, message_id: &String) -> Result<()> {
     let mut file = std::fs::File::create(filepath)?;
     file.write_all(&decrypted_data)?;
 
+    network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+
     Ok(())
 }
