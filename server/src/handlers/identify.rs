@@ -1,6 +1,8 @@
-use anyhow::Result;
+use crate::network;
+use anyhow::{anyhow, Result};
+use directories::ProjectDirs;
 use native_tls::TlsStream;
-use shared::crypto::*;
+use shared::{crypto::*, frames::ServerFrame};
 use std::net::TcpStream;
 
 pub fn identify(
@@ -12,5 +14,24 @@ pub fn identify(
     salt: &[u8; SALT_SIZE],
     nonce: &[u8; NONCE_SIZE],
 ) -> Result<()> {
-    todo!()
+    let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Server") {
+        Some(dir) => dir,
+        None => {
+            return Err(anyhow!(
+                "No valid home directory path could be retrieved from the operating system"
+            ))
+        }
+    };
+    let path = dir.data_dir().join(username);
+    let db = sled::open(path)?;
+    db.insert("public_key", public_key)?;
+    db.insert("auth_key", auth_key)?;
+    db.insert("encrypted_private_key", encrypted_private_key)?;
+    db.insert("salt", salt)?;
+    db.insert("nonce", nonce)?;
+
+    let frame = ServerFrame::IdentifyResponse { ok: true };
+    network::write(stream, frame)?;
+
+    Ok(())
 }

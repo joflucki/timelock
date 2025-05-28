@@ -2,15 +2,17 @@ use crate::crypto::*;
 use crate::network;
 use crate::utils;
 use anyhow::{anyhow, Result};
-use chrono::DateTime;
-use chrono::Utc;
+use chrono::NaiveDateTime;
 use shared::crypto::*;
 use shared::frames::ClientFrame;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-pub fn send(filepath: &Path, recipient_username: &String, datetime: &DateTime<Utc>) -> Result<()> {
+pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -> Result<()> {
+    let filepath = Path::new(filepath);
+    let datetime = NaiveDateTime::parse_from_str(datetime, "%Y-%m-%d %H:%M:%S")?.and_utc();
+
     // Connect to the server
     let mut stream: native_tls::TlsStream<std::net::TcpStream> = network::connect()?;
 
@@ -29,7 +31,7 @@ pub fn send(filepath: &Path, recipient_username: &String, datetime: &DateTime<Ut
 
     // Load credentials
     let username = utils::load_username()?;
-    let (_, _, _, private_key, _, server_public_key) = utils::load_keys()?;
+    let (_, auth_key, _, private_key, _) = utils::load_keys()?;
 
     let mut recipient_shared_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
     exchange_keys(
@@ -81,25 +83,6 @@ pub fn send(filepath: &Path, recipient_username: &String, datetime: &DateTime<Ut
     let mut data_mac: [u8; MAC_SIZE] = [0; MAC_SIZE];
     authenticate(&mut data_mac, &recipient_shared_key, &data_vec);
 
-    // Authenticate the full message
-    let mut server_shared_key: [u8; 32] = [0; KEY_SIZE];
-    exchange_keys(&server_public_key, &private_key, &mut server_shared_key)?;
-
-    let mut full_message_vec: Vec<u8> = Vec::new();
-
-    full_message_vec.extend_from_slice(username.as_bytes());
-    full_message_vec.extend_from_slice(recipient_username.as_bytes());
-    full_message_vec.extend_from_slice(&datetime.timestamp().to_be_bytes());
-    full_message_vec.extend_from_slice(&encrypted_one_time_key);
-    full_message_vec.extend_from_slice(&key_nonce);
-    full_message_vec.extend_from_slice(&key_mac);
-    full_message_vec.extend_from_slice(&encrypted_data);
-    full_message_vec.extend_from_slice(&data_nonce);
-    full_message_vec.extend_from_slice(&data_mac);
-
-    let mut final_mac: [u8; MAC_SIZE] = [0; MAC_SIZE];
-    authenticate(&mut final_mac, &server_shared_key, &full_message_vec);
-
     network::write(
         &mut stream,
         ClientFrame::SendMessage {
@@ -112,7 +95,7 @@ pub fn send(filepath: &Path, recipient_username: &String, datetime: &DateTime<Ut
             encrypted_data,
             data_nonce,
             data_mac,
-            mac: final_mac,
+            auth_key: auth_key,
         },
     )?;
 

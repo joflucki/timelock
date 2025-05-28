@@ -7,6 +7,7 @@ edition = "2021"
 anyhow = "1.0.98"
 bincode = "1.3.3"
 chrono = "0.4.41"
+directories = "6.0.0"
 native-tls = { version = "0.2.14", features = ["vendored"] }
 shared = { path = "../shared" }
 sled = "0.34.7"

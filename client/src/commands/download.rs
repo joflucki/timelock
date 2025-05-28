@@ -1,4 +1,3 @@
-use crate::crypto::*;
 use crate::network;
 use crate::utils;
 use anyhow::{anyhow, Result};
@@ -7,25 +6,16 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-pub fn download(filepath: &Path, message_id: &String) -> Result<()> {
+pub fn download(filepath: &String, message_id: &String) -> Result<()> {
+    let filepath = Path::new(filepath);
     let username = utils::load_username()?;
-    let (_, _, _, private_key, _, server_public_key) = utils::load_keys()?;
-
-    let mut server_shared_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
-    exchange_keys(&server_public_key, &private_key, &mut server_shared_key)?;
-
-    let mut vec: Vec<u8> = Vec::new();
-    vec.extend_from_slice(username.as_bytes());
-    vec.extend_from_slice(message_id.as_bytes());
-
-    let mut mac: [u8; MAC_SIZE] = [0; MAC_SIZE];
-    authenticate(&mut mac, &server_shared_key, &vec);
+    let (_, auth_key, _, private_key, _) = utils::load_keys()?;
 
     let mut stream = network::connect()?;
     let message = shared::frames::ClientFrame::DownloadMessage {
         username: username.clone(),
         message_id: message_id.clone(),
-        mac,
+        auth_key: auth_key,
     };
 
     network::write(&mut stream, message)?;

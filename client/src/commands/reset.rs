@@ -35,26 +35,11 @@ pub fn reset() -> Result<()> {
     random_buffer(&mut nonce)?;
 
     // Load keys
-    let (_, _, _, private_key, public_key, server_public_key) = utils::load_keys()?;
+    let (_, old_auth_key, _, private_key, public_key) = utils::load_keys()?;
 
     // Encrypt private key
     let mut encrypted_private_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
     symmetric_encrypt(&nonce, &private_key, &enc_key, &mut encrypted_private_key)?;
-
-    // Compute shared key
-    let mut shared_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
-    exchange_keys(&server_public_key, &private_key, &mut shared_key)?;
-
-    // Authenticate the message
-    let mut message: Vec<u8> = Vec::new();
-    message.extend_from_slice(username.as_bytes());
-    message.extend_from_slice(&auth_key);
-    message.extend_from_slice(&encrypted_private_key);
-    message.extend_from_slice(&nonce);
-    message.extend_from_slice(&salt);
-
-    let mut mac: [u8; MAC_SIZE] = [0; MAC_SIZE];
-    authenticate(&mut mac, &shared_key, &message);
 
     // Connect to the server
     let mut stream = network::connect()?;
@@ -64,11 +49,11 @@ pub fn reset() -> Result<()> {
         &mut stream,
         ClientFrame::ResetPassword {
             username: username.clone(),
-            auth_key: auth_key,
+            new_auth_key: auth_key,
             encrypted_private_key: encrypted_private_key,
             salt: salt,
             nonce: nonce,
-            mac: mac,
+            old_auth_key: old_auth_key,
         },
     )?;
 
@@ -79,14 +64,7 @@ pub fn reset() -> Result<()> {
     };
 
     if ok {
-        utils::save_keys(
-            &master_key,
-            &auth_key,
-            &enc_key,
-            &private_key,
-            &public_key,
-            &server_public_key,
-        )?;
+        utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
         Ok(())
     } else {
         Err(anyhow!("Password reset refused by server"))

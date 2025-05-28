@@ -1,5 +1,5 @@
 use anyhow::Result;
-use chrono::{DateTime, FixedOffset, Utc};
+use chrono::{DateTime, Utc};
 use native_tls::TlsStream;
 use shared::crypto::*;
 use std::net::TcpStream;
@@ -15,7 +15,7 @@ pub fn send_message(
     encrypted_data: Vec<u8>,
     data_nonce: &[u8; NONCE_SIZE],
     data_mac: &[u8; MAC_SIZE],
-    mac: &[u8; MAC_SIZE],
+    auth_key: &[u8; KEY_SIZE],
 ) -> Result<()> {
     todo!()
 }

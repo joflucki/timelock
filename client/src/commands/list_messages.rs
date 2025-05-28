@@ -1,24 +1,17 @@
-use crate::crypto::*;
 use crate::network;
 use crate::utils;
 use anyhow::{anyhow, Result};
-use shared::crypto::*;
-use shared::models::MessagePreview;
+use tabled::settings::Style;
+use tabled::Table;
 
-pub fn list_messages() -> Result<Vec<MessagePreview>> {
+pub fn list_messages() -> Result<()> {
     let username = utils::load_username()?;
-    let (_, _, _, private_key, _, server_public_key) = utils::load_keys()?;
-
-    let mut shared_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
-    exchange_keys(&server_public_key, &private_key, &mut shared_key)?;
-
-    let mut mac: [u8; MAC_SIZE] = [0; MAC_SIZE];
-    authenticate(&mut mac, &shared_key, username.as_bytes());
+    let (_, auth_key, _, _, _) = utils::load_keys()?;
 
     let mut stream = network::connect()?;
     let message = shared::frames::ClientFrame::ListMessages {
         username: username.clone(),
-        mac,
+        auth_key: auth_key,
     };
 
     network::write(&mut stream, message)?;
@@ -30,5 +23,8 @@ pub fn list_messages() -> Result<Vec<MessagePreview>> {
         _ => return Err(anyhow!("Unexpected answer from server")),
     };
 
-    Ok(messages)
+    let mut table = Table::new(messages);
+    table.with(Style::modern_rounded());
+    println!("{}", table);
+    Ok(())
 }

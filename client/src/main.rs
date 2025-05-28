@@ -7,8 +7,6 @@ mod utils;
 use anyhow::Result;
 use clap::Parser;
 use cli::*;
-use std::path::Path;
-use utils::{display_messages, display_users, parse_datetime};
 
 fn main() -> Result<()> {
     shared::crypto::init()?;
@@ -20,23 +18,16 @@ fn main() -> Result<()> {
             filepath,
             recipient_username,
             datetime,
-        } => commands::send(
-            Path::new(filepath),
-            recipient_username,
-            &parse_datetime(datetime)?,
-        )?,
+        } => commands::send(filepath, recipient_username, datetime)?,
         Commands::List { list_command } => match list_command {
-            ListCommands::Users => display_users(commands::list_users()?),
-            ListCommands::Messages => display_messages(commands::list_messages()?),
+            ListCommands::Users => commands::list_users()?,
+            ListCommands::Messages => commands::list_messages()?,
         },
         Commands::Signup { username } => commands::signup(username)?,
         Commands::Reset {} => commands::reset()?,
-        Commands::Download { filepath, file_id } => {
-            commands::download(Path::new(filepath), file_id)?
-        }
-        Commands::Unlock { filepath, file_id } => commands::unlock(Path::new(filepath), file_id)?,
+        Commands::Download { filepath, file_id } => commands::download(filepath, file_id)?,
+        Commands::Unlock { filepath, file_id } => commands::unlock(filepath, file_id)?,
         Commands::Logout => commands::logout()?,
     };
-
     Ok(())
 }

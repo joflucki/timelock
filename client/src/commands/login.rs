@@ -46,12 +46,11 @@ pub fn login(username: &String) -> Result<()> {
             auth_key,
         },
     )?;
-    let (server_public_key, encrypted_private_key, nonce) = match network::read(&mut stream)? {
+    let (encrypted_private_key, nonce) = match network::read(&mut stream)? {
         ServerFrame::GetCredentialsResponse {
-            server_public_key,
             encrypted_private_key,
             nonce,
-        } => (server_public_key, encrypted_private_key, nonce),
+        } => (encrypted_private_key, nonce),
         _ => return Err(anyhow!("Unexpected response from server")),
     };
 
@@ -79,7 +78,6 @@ pub fn login(username: &String) -> Result<()> {
         &enc_key,
         &decrypted_private_key,
         &public_key,
-        &server_public_key,
     )?;
     utils::save_username(username)?;
 

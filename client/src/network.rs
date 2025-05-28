@@ -14,8 +14,8 @@ pub fn connect() -> Result<TlsStream<TcpStream>> {
     Ok(connector.connect("timelock.ch", stream)?)
 }
 
-pub fn write(stream: &mut TlsStream<TcpStream>, message: ClientFrame) -> Result<()> {
-    let mut encoded = bincode::serialize(&message)?;
+pub fn write(stream: &mut TlsStream<TcpStream>, frame: ClientFrame) -> Result<()> {
+    let mut encoded = bincode::serialize(&frame)?;
     let mut length = (encoded.len() as u32).to_be_bytes();
     stream.write_all(&mut length)?;
     stream.write_all(&mut encoded)?;
@@ -28,6 +28,6 @@ pub fn read(stream: &mut TlsStream<TcpStream>) -> Result<ServerFrame> {
     let length = u32::from_be_bytes(length);
     let mut buffer = vec![0; length as usize];
     stream.read_exact(&mut buffer)?;
-    let message: ServerFrame = bincode::deserialize(&buffer)?;
-    Ok(message)
+    let frame: ServerFrame = bincode::deserialize(&buffer)?;
+    Ok(frame)
 }

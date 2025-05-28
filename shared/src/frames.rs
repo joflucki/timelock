@@ -22,11 +22,11 @@ pub enum ClientFrame {
     },
     ResetPassword {
         username: String,
-        auth_key: [u8; KEY_SIZE],
+        new_auth_key: [u8; KEY_SIZE],
         encrypted_private_key: [u8; KEY_SIZE],
         salt: [u8; SALT_SIZE],
         nonce: [u8; NONCE_SIZE],
-        mac: [u8; MAC_SIZE],
+        old_auth_key: [u8; MAC_SIZE],
     },
     GetPublicKey {
         username: String,
@@ -41,22 +41,22 @@ pub enum ClientFrame {
         encrypted_data: Vec<u8>,
         data_nonce: [u8; NONCE_SIZE],
         data_mac: [u8; MAC_SIZE],
-        mac: [u8; MAC_SIZE],
+        auth_key: [u8; KEY_SIZE],
     },
     ListMessages {
         username: String,
-        mac: [u8; MAC_SIZE],
+        auth_key: [u8; KEY_SIZE],
     },
     ListUsers {},
     DownloadMessage {
         username: String,
         message_id: String,
-        mac: [u8; MAC_SIZE],
+        auth_key: [u8; KEY_SIZE],
     },
     UnlockMessage {
         username: String,
         message_id: String,
-        mac: [u8; MAC_SIZE],
+        auth_key: [u8; KEY_SIZE],
     },
 }
 
@@ -65,13 +65,11 @@ pub enum ClientFrame {
 pub enum ServerFrame {
     IdentifyResponse {
         ok: bool,
-        server_public_key: [u8; KEY_SIZE],
     },
     GetSaltResponse {
         salt: [u8; SALT_SIZE],
     },
     GetCredentialsResponse {
-        server_public_key: [u8; KEY_SIZE],
         encrypted_private_key: [u8; KEY_SIZE],
         nonce: [u8; NONCE_SIZE],
     },

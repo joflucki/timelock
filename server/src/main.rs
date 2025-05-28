@@ -1,4 +1,5 @@
 mod handlers;
+mod network;
 
 use anyhow::{anyhow, Result};
 use chrono::DateTime;
@@ -11,7 +12,6 @@ use std::thread;
 
 fn main() -> Result<()> {
     shared::crypto::init()?;
-
     let identity =
         Identity::from_pkcs8(include_bytes!("server.pem"), include_bytes!("server.key"))?;
     let listener = TcpListener::bind("0.0.0.0:8443")?;
@@ -69,11 +69,11 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
         shared::frames::ClientFrame::GetSalt { username } => get_salt(stream, &username),
         shared::frames::ClientFrame::ResetPassword {
             username,
-            auth_key,
+            new_auth_key: auth_key,
             encrypted_private_key,
             salt,
             nonce,
-            mac,
+            old_auth_key,
         } => reset_password(
             stream,
             &username,
@@ -81,7 +81,7 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
             &encrypted_private_key,
             &salt,
             &nonce,
-            &mac,
+            &auth_key,
         ),
         shared::frames::ClientFrame::GetPublicKey { username } => get_public_key(stream, &username),
         shared::frames::ClientFrame::SendMessage {
@@ -94,7 +94,7 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
             encrypted_data,
             data_nonce,
             data_mac,
-            mac,
+            auth_key,
         } => send_message(
             stream,
             &sender_username,
@@ -106,21 +106,22 @@ fn handle_client(stream: &mut TlsStream<TcpStream>) -> Result<()> {
             encrypted_data,
             &data_nonce,
             &data_mac,
-            &mac,
+            &auth_key,
         ),
-        shared::frames::ClientFrame::ListMessages { username, mac } => {
-            list_messages(stream, &username, &mac)
-        }
+        shared::frames::ClientFrame::ListMessages {
+            username,
+            auth_key: mac,
+        } => list_messages(stream, &username, &mac),
         shared::frames::ClientFrame::DownloadMessage {
             username,
             message_id,
-            mac,
-        } => download_message(stream, &username, &message_id, &mac),
+            auth_key,
+        } => download_message(stream, &username, &message_id, &auth_key),
         shared::frames::ClientFrame::UnlockMessage {
             username,
             message_id,
-            mac,
-        } => unlock_message(stream, &username, &message_id, &mac),
+            auth_key,
+        } => unlock_message(stream, &username, &message_id, &auth_key),
         shared::frames::ClientFrame::ListUsers {} => list_users(stream),
     }
 }

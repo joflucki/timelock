@@ -6,7 +6,7 @@ use std::net::TcpStream;
 pub fn list_messages(
     stream: &mut TlsStream<TcpStream>,
     username: &str,
-    mac: &[u8; MAC_SIZE],
+    auth_key: &[u8; KEY_SIZE],
 ) -> Result<()> {
     todo!()
 }

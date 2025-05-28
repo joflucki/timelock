@@ -1,7 +1,8 @@
 use crate::network;
 use anyhow::{anyhow, Result};
+use tabled::{settings::Style, Table};
 
-pub fn list_users() -> Result<Vec<String>> {
+pub fn list_users() -> Result<()> {
     let mut stream = network::connect()?;
     let message = shared::frames::ClientFrame::ListUsers {};
     network::write(&mut stream, message)?;
@@ -10,5 +11,9 @@ pub fn list_users() -> Result<Vec<String>> {
         shared::frames::ServerFrame::ListUsersResponse { usernames } => usernames,
         _ => return Err(anyhow!("Unexpected response from server")),
     };
-    Ok(usernames)
+
+    let mut table = Table::new(usernames);
+    table.with(Style::modern_rounded());
+    println!("{}", table);
+    Ok(())
 }

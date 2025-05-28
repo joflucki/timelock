@@ -6,8 +6,16 @@ use shared::crypto::*;
 use shared::frames::{ClientFrame, ServerFrame};
 
 pub fn signup(username: &String) -> Result<()> {
+    if !shared::utils::is_username_valid(&username) {
+        return Err(anyhow!(
+            "Username should contain only lowercase alphanumerical characters"
+        ));
+    }
+
     // Prompt for password
     let password = rpassword::prompt_password("Your password: ")?.to_string();
+
+    println!("Computing your cryptographic keys...");
 
     // Generate salt
     let mut salt: [u8; SALT_SIZE] = [0; SALT_SIZE];
@@ -41,6 +49,8 @@ pub fn signup(username: &String) -> Result<()> {
     let mut encrypted_private_key: [u8; KEY_SIZE] = [0; KEY_SIZE];
     symmetric_encrypt(&nonce, &private_key, &enc_key, &mut encrypted_private_key)?;
 
+    println!("Sending cryptographic keys to server...");
+
     // Connect to the server
     let mut stream = network::connect()?;
 
@@ -57,24 +67,15 @@ pub fn signup(username: &String) -> Result<()> {
         },
     )?;
 
-    let (ok, server_public_key) = match network::read(&mut stream)? {
-        ServerFrame::IdentifyResponse {
-            ok,
-            server_public_key,
-        } => (ok, server_public_key),
+    let ok = match network::read(&mut stream)? {
+        ServerFrame::IdentifyResponse { ok } => ok,
         _ => return Err(anyhow!("Unexpected server response")),
     };
 
     if ok {
-        utils::save_keys(
-            &master_key,
-            &auth_key,
-            &enc_key,
-            &private_key,
-            &public_key,
-            &server_public_key,
-        )?;
+        utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
         utils::save_username(username)?;
+        println!("Sign up successful!");
         Ok(())
     } else {
         Err(anyhow!("Server refused identification"))
