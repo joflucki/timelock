@@ -64,9 +64,7 @@ pub enum ClientFrame {
 /// Server network frame sent to the client
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ServerFrame {
-    IdentifyResponse {
-        ok: bool,
-    },
+    IdentifyResponse {},
     GetSaltResponse {
         salt: [u8; SALT_SIZE],
     },
@@ -74,15 +72,11 @@ pub enum ServerFrame {
         encrypted_private_key: [u8; KEY_SIZE],
         nonce: [u8; NONCE_SIZE],
     },
-    ResetPasswordResponse {
-        ok: bool,
-    },
+    ResetPasswordResponse {},
     GetPublicKeyResponse {
         public_key: [u8; KEY_SIZE],
     },
-    SendMessageResponse {
-        ok: bool,
-    },
+    SendMessageResponse {},
     ListMessagesResponse {
         message_previews: Vec<MessagePreview>,
     },

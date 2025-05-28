@@ -20,6 +20,7 @@ pub fn list_messages() -> Result<()> {
         shared::frames::ServerFrame::ListMessagesResponse {
             message_previews: messages,
         } => messages,
+        shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
         _ => return Err(anyhow!("Unexpected answer from server")),
     };
 
@@ -28,6 +29,6 @@ pub fn list_messages() -> Result<()> {
     println!("{}", table);
 
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-    
+
     Ok(())
 }

@@ -67,19 +67,15 @@ pub fn signup(username: &String) -> Result<()> {
         },
     )?;
 
-    let ok = match network::read(&mut stream)? {
-        ServerFrame::IdentifyResponse { ok } => ok,
+    match network::read(&mut stream)? {
+        ServerFrame::IdentifyResponse {} => {}
+        shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
         _ => return Err(anyhow!("Unexpected server response")),
     };
 
-    if ok {
-        utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
-        utils::save_username(username)?;
-        println!("Sign up successful!");
-        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-        Ok(())
-    } else {
-        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-        Err(anyhow!("Server refused identification"))
-    }
+    utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
+    utils::save_username(username)?;
+    println!("Sign up successful!");
+    network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+    Ok(())
 }

@@ -51,6 +51,7 @@ pub fn login(username: &String) -> Result<()> {
             encrypted_private_key,
             nonce,
         } => (encrypted_private_key, nonce),
+        shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
         _ => return Err(anyhow!("Unexpected response from server")),
     };
 

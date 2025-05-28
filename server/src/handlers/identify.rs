@@ -26,6 +26,7 @@ pub fn identify(
     if path.try_exists()? {
         return Err(anyhow!("Username already in use"));
     }
+    let path = path.join("user_data");
     let db = sled::open(path)?;
     db.insert("public_key", public_key)?;
     db.insert("auth_key", auth_key)?;
@@ -33,7 +34,7 @@ pub fn identify(
     db.insert("salt", salt)?;
     db.insert("nonce", nonce)?;
 
-    let frame = ServerFrame::IdentifyResponse { ok: true };
+    let frame = ServerFrame::IdentifyResponse {};
     network::write(stream, frame)?;
 
     Ok(())

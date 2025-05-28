@@ -99,14 +99,11 @@ pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -
         },
     )?;
 
-    if match network::read(&mut stream)? {
-        shared::frames::ServerFrame::SendMessageResponse { ok } => ok,
+    match network::read(&mut stream)? {
+        shared::frames::ServerFrame::SendMessageResponse {} => {}
+        shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
         _ => return Err(anyhow!("Unexpected answer from server")),
-    } {
-        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-        Ok(())
-    } else {
-        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-        Err(anyhow!("Server refused message"))
     }
+    network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+    Ok(())
 }

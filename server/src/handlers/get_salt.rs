@@ -15,7 +15,7 @@ pub fn get_salt(stream: &mut TlsStream<TcpStream>, username: &str) -> Result<()>
             ))
         }
     };
-    let path = dir.data_dir().join(username);
+    let path = dir.data_dir().join(username).join("user_data");
     let db = sled::open(path)?;
     let salt: [u8; SALT_SIZE] = db.get("salt")?.unwrap().as_ref().try_into()?;
 

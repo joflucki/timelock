@@ -58,17 +58,13 @@ pub fn reset() -> Result<()> {
     )?;
 
     // Read the response from the server
-    let ok = match network::read(&mut stream)? {
-        shared::frames::ServerFrame::ResetPasswordResponse { ok } => ok,
+    match network::read(&mut stream)? {
+        shared::frames::ServerFrame::ResetPasswordResponse {} => {}
+        shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
         _ => return Err(anyhow!("Unexpected response from server")),
     };
 
-    if ok {
-        utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
-        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-        Ok(())
-    } else {
-        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-        Err(anyhow!("Password reset refused by server"))
-    }
+    utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
+    network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+    Ok(())
 }

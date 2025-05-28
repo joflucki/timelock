@@ -28,6 +28,7 @@ pub fn unlock(filepath: &String, message_id: &String) -> Result<()> {
             key_nonce,
             key_mac,
         } => (sender_public_key, encrypted_key, key_nonce, key_mac),
+        shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
         _ => return Err(anyhow!("Unexpected response from server")),
     };
 

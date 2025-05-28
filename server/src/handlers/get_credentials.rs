@@ -19,7 +19,7 @@ pub fn get_credentials(
             ))
         }
     };
-    let path = dir.data_dir().join(username);
+    let path = dir.data_dir().join(username).join("user_data");
     let db = sled::open(path)?;
 
     let stored_auth_key: [u8; KEY_SIZE] = db.get("auth_key")?.unwrap().as_ref().try_into()?;
@@ -34,9 +34,13 @@ pub fn get_credentials(
         .try_into()?;
     let nonce: [u8; NONCE_SIZE] = db.get("nonce")?.unwrap().as_ref().try_into()?;
 
-    let frame = shared::frames::ServerFrame::GetCredentialsResponse {
-        encrypted_private_key: encrypted_private_key,
-        nonce: nonce,
-    };
-    network::write(stream, frame)
+    network::write(
+        stream,
+        shared::frames::ServerFrame::GetCredentialsResponse {
+            encrypted_private_key: encrypted_private_key,
+            nonce: nonce,
+        },
+    )?;
+
+    Ok(())
 }

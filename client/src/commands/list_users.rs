@@ -9,6 +9,7 @@ pub fn list_users() -> Result<()> {
 
     let usernames = match network::read(&mut stream)? {
         shared::frames::ServerFrame::ListUsersResponse { usernames } => usernames,
+        shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
         _ => return Err(anyhow!("Unexpected response from server")),
     };
 
@@ -17,6 +18,6 @@ pub fn list_users() -> Result<()> {
     println!("{}", table);
 
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-    
+
     Ok(())
 }

@@ -28,6 +28,7 @@ pub fn download(filepath: &String, message_id: &String) -> Result<()> {
                 data_nonce,
                 data_mac,
             } => (sender_public_key, encrypted_data, data_nonce, data_mac),
+            shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
             _ => return Err(anyhow!("Unexpected answer from server")),
         };
 
