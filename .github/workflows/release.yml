@@ -34,14 +34,14 @@ jobs:
 
       - name: Rename and Upload release assets for linux
         run: |
-          mv target/x86_64-unknown-linux-gnu/release/timelock-client target/x86_64-unknown-linux-gnu/release/timelock-client-$GITHUB_REF_NAME-linux-x86_64
-          mv target/x86_64-unknown-linux-gnu/release/timelock-server target/x86_64-unknown-linux-gnu/release/timelock-server-$GITHUB_REF_NAME-linux-x86_64
+          mv target/x86_64-unknown-linux-gnu/release/timelock-client target/x86_64-unknown-linux-gnu/release/timelock-client-${{ github.ref_name }}-linux-x86_64
+          mv target/x86_64-unknown-linux-gnu/release/timelock-server target/x86_64-unknown-linux-gnu/release/timelock-server-${{ github.ref_name }}-linux-x86_64
       
       - uses: softprops/action-gh-release@v2
         with:
           files: |
-            target/x86_64-unknown-linux-gnu/release/timelock-client-$GITHUB_REF_NAME-linux-x86_64
-            target/x86_64-unknown-linux-gnu/release/timelock-server-$GITHUB_REF_NAME-linux-x86_64
+            target/x86_64-unknown-linux-gnu/release/timelock-client-${{ github.ref_name }}-linux-x86_64
+            target/x86_64-unknown-linux-gnu/release/timelock-server-${{ github.ref_name }}-linux-x86_64
 
   release-windows:
     runs-on: windows-latest
@@ -65,14 +65,14 @@ jobs:
 
       - name: Rename and Upload release assets for windows
         run: |
-          mv target/x86_64-pc-windows-msvc/release/timelock-client.exe target/x86_64-pc-windows-msvc/release/timelock-client-$GITHUB_REF_NAME-windows-x86_64.exe
-          mv target/x86_64-pc-windows-msvc/release/timelock-server.exe target/x86_64-pc-windows-msvc/release/timelock-server-$GITHUB_REF_NAME-windows-x86_64.exe
+          mv target/x86_64-pc-windows-msvc/release/timelock-client.exe target/x86_64-pc-windows-msvc/release/timelock-client-${{ github.ref_name }}-windows-x86_64.exe
+          mv target/x86_64-pc-windows-msvc/release/timelock-server.exe target/x86_64-pc-windows-msvc/release/timelock-server-${{ github.ref_name }}-windows-x86_64.exe
       
       - uses: softprops/action-gh-release@v2
         with:
           files: |
-            target/x86_64-pc-windows-msvc/release/timelock-client-$GITHUB_REF_NAME-windows-x86_64.exe
-            target/x86_64-pc-windows-msvc/release/timelock-server-$GITHUB_REF_NAME-windows-x86_64.exe
+            target/x86_64-pc-windows-msvc/release/timelock-client-${{ github.ref_name }}-windows-x86_64.exe
+            target/x86_64-pc-windows-msvc/release/timelock-server-${{ github.ref_name }}-windows-x86_64.exe
 
   release-macos:
     runs-on: macos-latest
@@ -96,11 +96,11 @@ jobs:
 
       - name: Rename and Upload release assets for macOS
         run: |
-          mv target/x86_64-apple-darwin/release/timelock-client target/x86_64-apple-darwin/release/timelock-client-$GITHUB_REF_NAME-macos-x86_64
-          mv target/x86_64-apple-darwin/release/timelock-server target/x86_64-apple-darwin/release/timelock-server-$GITHUB_REF_NAME-macos-x86_64
+          mv target/x86_64-apple-darwin/release/timelock-client target/x86_64-apple-darwin/release/timelock-client-${{ github.ref_name }}-macos-x86_64
+          mv target/x86_64-apple-darwin/release/timelock-server target/x86_64-apple-darwin/release/timelock-server-${{ github.ref_name }}-macos-x86_64
         
       - uses: softprops/action-gh-release@v2
         with:
           files: |
-            target/x86_64-apple-darwin/release/timelock-client-$GITHUB_REF_NAME-macos-x86_64
-            target/x86_64-apple-darwin/release/timelock-server-$GITHUB_REF_NAME-macos-x86_64
+            target/x86_64-apple-darwin/release/timelock-client-${{ github.ref_name }}-macos-x86_64
+            target/x86_64-apple-darwin/release/timelock-server-${{ github.ref_name }}-macos-x86_64
