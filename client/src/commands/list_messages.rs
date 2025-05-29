@@ -1,8 +1,9 @@
 use crate::network;
 use crate::utils;
 use anyhow::{anyhow, Result};
+use chrono::DateTime;
+use tabled::builder::Builder;
 use tabled::settings::Style;
-use tabled::Table;
 
 pub fn list_messages() -> Result<()> {
     let username = utils::load_username()?;
@@ -24,7 +25,22 @@ pub fn list_messages() -> Result<()> {
         _ => return Err(anyhow!("Unexpected answer from server")),
     };
 
-    let mut table = Table::new(messages);
+    let mut builder = Builder::default();
+    builder.push_record(vec!["File ID", "Sender", "File size", "Unlock time"]);
+    for message in messages {
+        let dt = DateTime::from_timestamp(message.unlock_timestamp as i64, 0);
+        if dt.is_none() {
+            continue;
+        }
+        let dt = dt.unwrap();
+        builder.push_record(vec![
+            message.message_id,
+            message.sender_username,
+            utils::format_file_size(message.file_size),
+            dt.format("%Y-%m-%d %H:%M:%S").to_string(),
+        ]);
+    }
+    let mut table = builder.build();
     table.with(Style::modern_rounded());
     println!("{}", table);
 

@@ -39,14 +39,19 @@ pub fn list_messages(
             return Err(anyhow!(e));
         }
         let entry = result.unwrap();
-        let mut file = File::open(entry.path().join("metadata"))?;
+        let mut metadata_file = File::open(entry.path().join("metadata"))?;
+        let data_file = File::open(entry.path().join("data"))?;
         let mut bytes: Vec<u8> = Vec::new();
-        file.read_to_end(&mut bytes)?;
+        metadata_file.read_to_end(&mut bytes)?;
         let metadata: MessageMetadataFile = bincode::deserialize(&bytes)?;
         previews.push(MessagePreview {
+            message_id: entry
+                .file_name()
+                .into_string()
+                .map_err(|_| anyhow!("Could not read file name"))?,
             sender_username: metadata.sender_username.clone(),
             unlock_timestamp: metadata.unlock_timestamp,
-            file_size: file.metadata()?.len(),
+            file_size: data_file.metadata()?.len(),
         });
     }
 

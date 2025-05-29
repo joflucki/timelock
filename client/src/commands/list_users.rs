@@ -1,6 +1,6 @@
 use crate::network;
 use anyhow::{anyhow, Result};
-use tabled::{settings::Style, Table};
+use tabled::{builder::Builder, settings::Style};
 
 pub fn list_users() -> Result<()> {
     let mut stream = network::connect()?;
@@ -13,7 +13,12 @@ pub fn list_users() -> Result<()> {
         _ => return Err(anyhow!("Unexpected response from server")),
     };
 
-    let mut table = Table::new(usernames);
+    let mut builder = Builder::new();
+    builder.push_record(vec!["User"]);
+    usernames
+        .iter()
+        .for_each(|username| builder.push_record(vec![username]));
+    let mut table = builder.build();
     table.with(Style::modern_rounded());
     println!("{}", table);
 

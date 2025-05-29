@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
-use tabled::Tabled;
 
 use crate::crypto::{KEY_SIZE, MAC_SIZE, NONCE_SIZE};
 
-#[derive(Serialize, Deserialize, Debug, Tabled)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct MessagePreview {
+    pub message_id: String,
     pub sender_username: String,
     pub unlock_timestamp: u64,
     pub file_size: u64,

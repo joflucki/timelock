@@ -1,3 +1,5 @@
+use crate::network;
+use crate::utils;
 use anyhow::{anyhow, Result};
 use chrono::Utc;
 use directories::ProjectDirs;
@@ -5,8 +7,6 @@ use native_tls::TlsStream;
 use shared::{crypto::KEY_SIZE, models::MessageMetadataFile};
 use std::{fs::File, io::Read, net::TcpStream};
 use subtle::ConstantTimeEq;
-
-use crate::{network, utils};
 
 pub fn unlock_message(
     stream: &mut TlsStream<TcpStream>,
@@ -40,11 +40,7 @@ pub fn unlock_message(
     let metadata: MessageMetadataFile = bincode::deserialize(&bytes)?;
 
     if (Utc::now().timestamp() as u64) < metadata.unlock_timestamp {
-        return Err(anyhow!(
-            "Message can not be unlocked at this time. {} vs {}",
-            Utc::now().timestamp() as u64,
-            metadata.unlock_timestamp
-        ));
+        return Err(anyhow!("Message can not be unlocked yet"));
     };
 
     let (_, _, sender_public_key, _, _) = utils::load_credentials(&metadata.sender_username)?;
