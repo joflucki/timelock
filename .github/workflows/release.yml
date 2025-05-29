@@ -12,26 +12,83 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  release:
+  release-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Write certificate and key files
         run: |
           echo "${{ secrets.SERVER_CERT }}" > ./client/src/cert.pem
           echo "${{ secrets.SERVER_KEY }}" > ./server/src/key.pem
           echo "${{ secrets.SERVER_CERT }}" > ./server/src/cert.pem
-          
-      - name: Build client
-        run: cargo build --release --package client
 
-      - name: Build server
-        run: cargo build --release --package server
+      - name: Install rustup targets
+        run: rustup target add x86_64-unknown-linux-gnu
+
+      - name: Build client for linux
+        run: cargo build --release --package client --target x86_64-unknown-linux-gnu
+
+      - name: Build server for linux
+        run: cargo build --release --package server --target x86_64-unknown-linux-gnu
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            target/release/tl
-            target/release/timelock-server
+            target/x86_64-unknown-linux-gnu/release/tl
+            target/x86_64-unknown-linux-gnu/release/timelock-server
+
+  release-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write certificate and key files
+        run: |
+          echo "${{ secrets.SERVER_CERT }}" > ./client/src/cert.pem
+          echo "${{ secrets.SERVER_KEY }}" > ./server/src/key.pem
+          echo "${{ secrets.SERVER_CERT }}" > ./server/src/cert.pem
+
+      - name: Install rustup targets
+        run: rustup target add x86_64-pc-windows-msvc
+
+      - name: Build client for windows
+        run: cargo build --release --package client --target x86_64-pc-windows-msvc
+
+      - name: Build server for windows
+        run: cargo build --release --package server --target x86_64-pc-windows-msvc
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            target/x86_64-pc-windows-msvc/release/tl.exe
+            target/x86_64-pc-windows-msvc/release/timelock-server.exe
+
+  release-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write certificate and key files
+        run: |
+          echo "${{ secrets.SERVER_CERT }}" > ./client/src/cert.pem
+          echo "${{ secrets.SERVER_KEY }}" > ./server/src/key.pem
+          echo "${{ secrets.SERVER_CERT }}" > ./server/src/cert.pem
+
+      - name: Install rustup targets
+        run: rustup target add x86_64-apple-darwin
+
+      - name: Build client for macOS
+        run: cargo build --release --package client --target x86_64-apple-darwin
+
+      - name: Build server for macOS
+        run: cargo build --release --package server --target x86_64-apple-darwin
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            target/x86_64-apple-darwin/release/tl
+            target/x86_64-apple-darwin/release/timelock-server
