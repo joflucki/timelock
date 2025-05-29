@@ -7,7 +7,10 @@ use anyhow::{anyhow, Result};
 use directories::ProjectDirs;
 use shared::crypto::{KEY_SIZE, NONCE_SIZE, SALT_SIZE};
 
-/// Returns (`auth_key`, `encrypted_private_key`, `public_key`, `nonce`, `salt`)
+/// Loads the credentials for the specified user.
+/// 
+/// # Returns
+/// The loaded credentials (`auth_key`, `encrypted_private_key`, `public_key`, `nonce`, `salt`)
 pub fn load_credentials(
     username: &str,
 ) -> Result<(
@@ -44,6 +47,7 @@ pub fn load_credentials(
     Ok((auth_key, encrypted_private_key, public_key, nonce, salt))
 }
 
+/// Saves the user's credentials.
 pub fn save_credentials(
     username: &str,
     auth_key: &[u8; KEY_SIZE],

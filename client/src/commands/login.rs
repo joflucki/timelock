@@ -5,6 +5,9 @@ use anyhow::{anyhow, Result};
 use shared::crypto::*;
 use shared::frames::{ClientFrame, ServerFrame};
 
+/// Authenticates an existing user with its username and password.
+/// 
+/// Credentials are then saved on a local file for future commands.
 pub fn login(username: &String) -> Result<()> {
     // Connect to the server
     let mut stream = network::connect()?;

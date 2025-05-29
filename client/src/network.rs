@@ -6,6 +6,7 @@ use std::{
     net::TcpStream,
 };
 
+/// Connects to the server using TLS.
 pub fn connect() -> Result<TlsStream<TcpStream>> {
     let cert = native_tls::Certificate::from_pem(include_bytes!("cert.pem"))?;
     let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
@@ -14,6 +15,7 @@ pub fn connect() -> Result<TlsStream<TcpStream>> {
     Ok(connector.connect("timelock.ch", stream)?)
 }
 
+/// Writes a network frame to the server.
 pub fn write(stream: &mut TlsStream<TcpStream>, frame: ClientFrame) -> Result<()> {
     let mut encoded = bincode::serialize(&frame)?;
     let mut length = (encoded.len() as u32).to_be_bytes();
@@ -22,6 +24,7 @@ pub fn write(stream: &mut TlsStream<TcpStream>, frame: ClientFrame) -> Result<()
     Ok(())
 }
 
+/// Read a network frame from the server.
 pub fn read(stream: &mut TlsStream<TcpStream>) -> Result<ServerFrame> {
     let mut length: [u8; 4] = [0; 4];
     stream.read_exact(&mut length)?;

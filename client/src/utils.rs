@@ -6,8 +6,8 @@ use std::io::{Read, Write};
 
 /// Loads cryptographic keys from the default file.
 ///
-/// The keys are expected to be in a specific order:
-/// master_key, auth_key, enc_key, private_key, public_key
+/// # Returns
+/// The loaded keys (`master_key`, `auth_key`, `enc_key`, `private_key`, `public_key`)
 pub fn load_keys() -> Result<(
     [u8; KEY_SIZE],
     [u8; KEY_SIZE],
@@ -69,6 +69,7 @@ pub fn save_keys(
     Ok(())
 }
 
+/// Deletes the default file that contains the cryptographic keys.
 pub fn delete_keys() -> Result<()> {
     let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Client") {
         Some(dir) => dir,
@@ -83,6 +84,7 @@ pub fn delete_keys() -> Result<()> {
     Ok(())
 }
 
+/// Save the username of the current user to the default file.
 pub fn save_username(username: &str) -> Result<()> {
     let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Client") {
         Some(dir) => dir,
@@ -98,6 +100,7 @@ pub fn save_username(username: &str) -> Result<()> {
     Ok(())
 }
 
+/// Loads the username of the current user from the default file.
 pub fn load_username() -> Result<String> {
     let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Client") {
         Some(dir) => dir,
@@ -112,6 +115,8 @@ pub fn load_username() -> Result<String> {
     file.read_to_string(&mut username)?;
     Ok(username.trim().to_string())
 }
+
+/// Deletes the default file that contains the current user's username.
 pub fn delete_username() -> Result<()> {
     let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Client") {
         Some(dir) => dir,
@@ -126,6 +131,7 @@ pub fn delete_username() -> Result<()> {
     Ok(())
 }
 
+/// Formats a number of bytes to a "GB"/"MB"/"KB" style string.
 pub fn format_file_size(bytes: u64) -> String {
     const KB: u64 = 1024;
     const MB: u64 = 1024 * KB;

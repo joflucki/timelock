@@ -6,6 +6,7 @@ use shared::crypto::*;
 use std::io::Read;
 use std::io::Write;
 
+/// Unlocks a previously downloaded file and decrypts it.
 pub fn unlock(filepath: &String, message_id: &String) -> Result<()> {
     let username = utils::load_username()?;
     let (_, auth_key, _, private_key, _) = utils::load_keys()?;

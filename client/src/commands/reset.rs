@@ -5,6 +5,9 @@ use anyhow::{anyhow, Result};
 use shared::crypto::*;
 use shared::frames::ClientFrame;
 
+/// Resets the user's password and updates local authentication files.
+/// 
+/// Requires prior authentication.
 pub fn reset() -> Result<()> {
     // Load username
     let username = utils::load_username()?;

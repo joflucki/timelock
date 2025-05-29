@@ -5,6 +5,9 @@ use chrono::DateTime;
 use tabled::builder::Builder;
 use tabled::settings::Style;
 
+/// Lists all received messages.
+/// 
+/// Requires prior authentication.
 pub fn list_messages() -> Result<()> {
     let username = utils::load_username()?;
     let (_, auth_key, _, _, _) = utils::load_keys()?;

@@ -2,6 +2,7 @@ use crate::network;
 use anyhow::{anyhow, Result};
 use tabled::{builder::Builder, settings::Style};
 
+/// Lists all existing users.
 pub fn list_users() -> Result<()> {
     let mut stream = network::connect()?;
     let message = shared::frames::ClientFrame::ListUsers {};

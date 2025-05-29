@@ -9,6 +9,9 @@ use shared::frames::ClientFrame;
 use std::fs::File;
 use std::io::Read;
 
+/// Sends a time capsule to the specified user.
+/// 
+/// Requires prior authentication.
 pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -> Result<()> {
     let datetime = NaiveDateTime::parse_from_str(datetime, "%Y-%m-%d %H:%M:%S")?.and_utc();
     if datetime.timestamp() < Utc::now().timestamp() {

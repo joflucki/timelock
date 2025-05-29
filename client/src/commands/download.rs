@@ -6,6 +6,9 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+/// Downloads an encrypted file to the specified path.
+/// 
+/// Requires prior authentication.
 pub fn download(filepath: &String, message_id: &String) -> Result<()> {
     let filepath = Path::new(filepath);
     let username = utils::load_username()?;

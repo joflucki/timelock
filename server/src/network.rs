@@ -3,6 +3,7 @@ use native_tls::TlsStream;
 use shared::frames::ServerFrame;
 use std::{io::Write, net::TcpStream};
 
+/// Writes a network frame to the client.
 pub fn write(stream: &mut TlsStream<TcpStream>, frame: ServerFrame) -> Result<()> {
     let mut encoded = bincode::serialize(&frame)?;
     let mut length = (encoded.len() as u32).to_be_bytes();

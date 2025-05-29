@@ -90,6 +90,9 @@ pub fn random_buffer(buffer: &mut [u8]) -> Result<()> {
     Ok(())
 }
 
+/// Encrypts the plaintext using the specified key and nonce.
+///
+/// Uses the XChaCha20 stream cipher.
 pub fn symmetric_encrypt(
     nonce: &[u8; NONCE_SIZE],
     plaintext: &[u8],
@@ -112,6 +115,9 @@ pub fn symmetric_encrypt(
     }
 }
 
+/// Decrypts the ciphertext using the specified key and nonce.
+///
+/// Uses the XChaCha20 stream cipher.
 pub fn symmetric_decrypt(
     nonce: &[u8; NONCE_SIZE],
     ciphertext: &[u8],
@@ -134,6 +140,9 @@ pub fn symmetric_decrypt(
     }
 }
 
+/// Computes a MAC for the specific message and key.
+/// 
+/// Uses the HMAC-512-256 algorithm.
 pub fn authenticate(mac: &mut [u8; MAC_SIZE], key: &[u8; KEY_SIZE], message: &[u8]) {
     let ret = unsafe {
         libsodium_sys::crypto_auth(

@@ -5,6 +5,7 @@ use anyhow::{anyhow, Result};
 use shared::crypto::*;
 use shared::frames::{ClientFrame, ServerFrame};
 
+/// Creates a new user and stores authentication files locally.
 pub fn signup(username: &String) -> Result<()> {
     if !shared::utils::is_username_valid(&username) {
         return Err(anyhow!(

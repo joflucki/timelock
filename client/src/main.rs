@@ -11,6 +11,10 @@ use directories::ProjectDirs;
 use std::fs;
 
 fn main() -> Result<()> {
+    // Initialize cryptography module
+    shared::crypto::init()?;
+
+    // Create the data directory for the app
     let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Client") {
         Some(dir) => dir,
         None => {
@@ -21,6 +25,7 @@ fn main() -> Result<()> {
     };
     fs::create_dir_all(dir.data_dir())?;
 
+    // Parse command-line arguments using the defined CLI structure
     let cli = Cli::parse();
     match &cli.command {
         Commands::Login { user: username } => commands::login(username)?,
