@@ -36,7 +36,8 @@ jobs:
         run: |
           mv target/x86_64-unknown-linux-gnu/release/timelock-client target/x86_64-unknown-linux-gnu/release/timelock-client-${GITHUB_REF#refs/tags/}-linux-x86_64
           mv target/x86_64-unknown-linux-gnu/release/timelock-server target/x86_64-unknown-linux-gnu/release/timelock-server-${GITHUB_REF#refs/tags/}-linux-x86_64
-        uses: softprops/action-gh-release@v2
+      
+      - uses: softprops/action-gh-release@v2
         with:
           files: |
             target/x86_64-unknown-linux-gnu/release/timelock-client-${GITHUB_REF#refs/tags/}-linux-x86_64
@@ -66,7 +67,8 @@ jobs:
         run: |
           mv target/x86_64-pc-windows-msvc/release/timelock-client.exe target/x86_64-pc-windows-msvc/release/timelock-client-${GITHUB_REF#refs/tags/}-windows-x86_64.exe
           mv target/x86_64-pc-windows-msvc/release/timelock-server.exe target/x86_64-pc-windows-msvc/release/timelock-server-${GITHUB_REF#refs/tags/}-windows-x86_64.exe
-        uses: softprops/action-gh-release@v2
+      
+      - uses: softprops/action-gh-release@v2
         with:
           files: |
             target/x86_64-pc-windows-msvc/release/timelock-client-${GITHUB_REF#refs/tags/}-windows-x86_64.exe
@@ -96,8 +98,9 @@ jobs:
         run: |
           mv target/x86_64-apple-darwin/release/timelock-client target/x86_64-apple-darwin/release/timelock-client-${GITHUB_REF#refs/tags/}-macos-x86_64
           mv target/x86_64-apple-darwin/release/timelock-server target/x86_64-apple-darwin/release/timelock-server-${GITHUB_REF#refs/tags/}-macos-x86_64
-        uses: softprops/action-gh-release@v2
+        
+      - uses: softprops/action-gh-release@v2
         with:
           files: |
-            target/x86_64-apple-darwin/release/tl-macos
-            target/x86_64-apple-darwin/release/timelock-server-macos
+            target/x86_64-apple-darwin/release/timelock-client-${GITHUB_REF#refs/tags/}-macos-x86_64
+            target/x86_64-apple-darwin/release/timelock-server-${GITHUB_REF#refs/tags/}-macos-x86_64
