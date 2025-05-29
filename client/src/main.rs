@@ -23,7 +23,7 @@ fn main() -> Result<()> {
 
     let cli = Cli::parse();
     match &cli.command {
-        Commands::Login { username } => commands::login(username)?,
+        Commands::Login { user: username } => commands::login(username)?,
         Commands::Send {
             file,
             recipient: recipient_username,
@@ -33,7 +33,7 @@ fn main() -> Result<()> {
             ListCommands::Users => commands::list_users()?,
             ListCommands::Messages => commands::list_messages()?,
         },
-        Commands::Signup { username } => commands::signup(username)?,
+        Commands::Signup { user: username } => commands::signup(username)?,
         Commands::Reset {} => commands::reset()?,
         Commands::Download { file, file_id } => commands::download(file, file_id)?,
         Commands::Unlock { file, file_id } => commands::unlock(file, file_id)?,

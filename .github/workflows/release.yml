@@ -33,5 +33,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            target/release/client
-            target/release/server
+            target/release/tl
+            target/release/timelock-server

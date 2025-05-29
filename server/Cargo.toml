@@ -12,3 +12,7 @@ native-tls = { version = "0.2.14", features = ["vendored"] }
 shared = { path = "../shared" }
 subtle = "2.6.1"
 uuid = { version = "1.17.0", features = ["v4"] }
+
+[[bin]]
+name = "timelock-server"
+path = "src/main.rs"
