@@ -6,7 +6,7 @@ use shared::crypto::*;
 use shared::frames::{ClientFrame, ServerFrame};
 
 /// Authenticates an existing user with its username and password.
-/// 
+///
 /// Credentials are then saved on a local file for future commands.
 pub fn login(username: &String) -> Result<()> {
     // Connect to the server
@@ -87,5 +87,7 @@ pub fn login(username: &String) -> Result<()> {
 
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
 
+    println!("Login successful");
+    println!("You are now authenticated as {}", username);
     Ok(())
 }

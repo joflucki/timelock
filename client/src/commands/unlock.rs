@@ -7,7 +7,11 @@ use std::io::Read;
 use std::io::Write;
 
 /// Unlocks a previously downloaded file and decrypts it.
-pub fn unlock(filepath: &String, message_id: &String) -> Result<()> {
+pub fn unlock(
+    input_filepath: &String,
+    output_filepath: &String,
+    message_id: &String,
+) -> Result<()> {
     let username = utils::load_username()?;
     let (_, auth_key, _, private_key, _) = utils::load_keys()?;
 
@@ -55,10 +59,10 @@ pub fn unlock(filepath: &String, message_id: &String) -> Result<()> {
     let mut data_nonce: [u8; NONCE_SIZE] = [0; NONCE_SIZE];
     let mut data_mac: [u8; MAC_SIZE] = [0; MAC_SIZE];
 
-    let mut file = std::fs::File::open(filepath)?;
-    file.read_exact(&mut data_mac)?;
-    file.read_exact(&mut data_nonce)?;
-    file.read_to_end(&mut encrypted_data)?;
+    let mut input_file = std::fs::File::open(input_filepath)?;
+    input_file.read_exact(&mut data_mac)?;
+    input_file.read_exact(&mut data_nonce)?;
+    input_file.read_to_end(&mut encrypted_data)?;
 
     let mut decrypted_data: Vec<u8> = vec![0; encrypted_data.len()];
     symmetric_decrypt(
@@ -68,10 +72,10 @@ pub fn unlock(filepath: &String, message_id: &String) -> Result<()> {
         &mut decrypted_data,
     )?;
 
-    let mut file = std::fs::File::create(filepath)?;
-    file.write_all(&decrypted_data)?;
+    let mut output_file = std::fs::File::create(output_filepath)?;
+    output_file.write_all(&decrypted_data)?;
 
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-
+    println!("File successfully unlocked at {}", output_filepath);
     Ok(())
 }

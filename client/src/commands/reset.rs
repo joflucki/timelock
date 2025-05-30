@@ -69,5 +69,6 @@ pub fn reset() -> Result<()> {
 
     utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+    print!("Password reset successful");
     Ok(())
 }

@@ -10,7 +10,7 @@ use std::fs::File;
 use std::io::Read;
 
 /// Sends a time capsule to the specified user.
-/// 
+///
 /// Requires prior authentication.
 pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -> Result<()> {
     let datetime = NaiveDateTime::parse_from_str(datetime, "%Y-%m-%d %H:%M:%S")?.and_utc();
@@ -108,5 +108,6 @@ pub fn send(filepath: &String, recipient_username: &String, datetime: &String) -
         _ => return Err(anyhow!("Unexpected answer from server")),
     }
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+    println!("Message sent successfully to {}", recipient_username);
     Ok(())
 }

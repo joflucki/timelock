@@ -13,10 +13,11 @@ use std::{fs, thread};
 
 fn main() -> Result<()> {
     // Initialize cryptography module
+    println!("Initializing cryptography module");
     shared::crypto::init()?;
 
-    
     // Create the data directory for the app
+    println!("Setting up data directory");
     let dir = match ProjectDirs::from("ch", "Timelock", "Timelock Server") {
         Some(dir) => dir,
         None => {
@@ -28,11 +29,13 @@ fn main() -> Result<()> {
     fs::create_dir_all(dir.data_dir())?;
 
     // Accept incoming TLS connections
+    println!("Setting up TLS server");
     let identity = Identity::from_pkcs8(include_bytes!("cert.pem"), include_bytes!("key.pem"))?;
     let listener = TcpListener::bind("0.0.0.0:8443")?;
     let acceptor = TlsAcceptor::new(identity)?;
     let acceptor = Arc::new(acceptor);
 
+    println!("Server started");
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {

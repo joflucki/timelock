@@ -30,9 +30,9 @@ fn main() -> Result<()> {
     match &cli.command {
         Commands::Login { user: username } => commands::login(username)?,
         Commands::Send {
-            file,
+            r#in: file,
             recipient: recipient_username,
-            datetime,
+            time: datetime,
         } => commands::send(file, recipient_username, datetime)?,
         Commands::List { list_command } => match list_command {
             ListCommands::Users => commands::list_users()?,
@@ -40,8 +40,8 @@ fn main() -> Result<()> {
         },
         Commands::Signup { user: username } => commands::signup(username)?,
         Commands::Reset {} => commands::reset()?,
-        Commands::Download { file, file_id } => commands::download(file, file_id)?,
-        Commands::Unlock { file, file_id } => commands::unlock(file, file_id)?,
+        Commands::Download { out: file, file_id } => commands::download(file, file_id)?,
+        Commands::Unlock { r#in, file_id, out } => commands::unlock(r#in, out, file_id)?,
         Commands::Logout => commands::logout()?,
     };
     Ok(())

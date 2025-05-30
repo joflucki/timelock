@@ -4,13 +4,11 @@ use anyhow::{anyhow, Result};
 use shared::crypto::*;
 use std::fs::File;
 use std::io::Write;
-use std::path::Path;
 
 /// Downloads an encrypted file to the specified path.
-/// 
+///
 /// Requires prior authentication.
 pub fn download(filepath: &String, message_id: &String) -> Result<()> {
-    let filepath = Path::new(filepath);
     let username = utils::load_username()?;
     let (_, auth_key, _, private_key, _) = utils::load_keys()?;
 
@@ -54,6 +52,6 @@ pub fn download(filepath: &String, message_id: &String) -> Result<()> {
     file.write_all(&encrypted_data)?;
 
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
-
+    println!("File successfully downloaded at {}", filepath);
     Ok(())
 }

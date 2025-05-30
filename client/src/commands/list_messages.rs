@@ -6,7 +6,7 @@ use tabled::builder::Builder;
 use tabled::settings::Style;
 
 /// Lists all received messages.
-/// 
+///
 /// Requires prior authentication.
 pub fn list_messages() -> Result<()> {
     let username = utils::load_username()?;
@@ -27,6 +27,12 @@ pub fn list_messages() -> Result<()> {
         shared::frames::ServerFrame::Error { message } => return Err(anyhow!(message)),
         _ => return Err(anyhow!("Unexpected answer from server")),
     };
+
+    if messages.is_empty() {
+        println!("No message received yet");
+        network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+        return Ok(());
+    }
 
     let mut builder = Builder::default();
     builder.push_record(vec!["File ID", "Sender", "File size", "Unlock time"]);

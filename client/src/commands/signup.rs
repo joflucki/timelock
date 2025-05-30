@@ -73,5 +73,7 @@ pub fn signup(username: &String) -> Result<()> {
     utils::save_keys(&master_key, &auth_key, &enc_key, &private_key, &public_key)?;
     utils::save_username(username)?;
     network::write(&mut stream, shared::frames::ClientFrame::Disconnect {})?;
+    println!("Sign up successful");
+    println!("You are now authenticated as {}", username);
     Ok(())
 }

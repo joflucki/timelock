@@ -14,8 +14,13 @@ pub fn list_users() -> Result<()> {
         _ => return Err(anyhow!("Unexpected response from server")),
     };
 
+    if usernames.is_empty() {
+        println!("No users have signed up yet");
+        return Ok(());
+    }
+
     let mut builder = Builder::new();
-    builder.push_record(vec!["User"]);
+    builder.push_record(vec!["Username"]);
     usernames
         .iter()
         .for_each(|username| builder.push_record(vec![username]));
