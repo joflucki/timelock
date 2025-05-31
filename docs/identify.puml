@@ -10,7 +10,7 @@ rnote over Client
 end rnote
 
 rnote over Client
-  <math>"Pick salt " s</math>
+  <math>"Pick salt " a</math>
 end rnote
 
 
@@ -30,7 +30,7 @@ rnote over Client
 end rnote
 
 
-Client ->> Server: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k || s</math>
+Client ->> Server: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k || a</math>
 
-Server ->> Database: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k || s</math>
+Server ->> Database: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k || a</math>
 @enduml

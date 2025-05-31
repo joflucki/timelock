@@ -6,8 +6,8 @@ database Database
 
 Client ->> Server: <math>I_c</math>
 Server ->> Database: Request
-Database ->> Server: <math>s</math>
-Server ->> Client: <math>s</math>
+Database ->> Server: <math>a</math>
+Server ->> Client: <math>a</math>
 
 
 rnote over Client
