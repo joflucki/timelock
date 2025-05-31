@@ -4,22 +4,13 @@ participant Client
 participant Server
 database Database
 
-
-rnote over Client
-  <math>\tau = "MAC"_{S_{cs}}(I_r || I_c)</math>
-end rnote
-
-Client ->> Server: <math>(I_r || I_c) || \tau</math>
-
+Client ->> Server: <math>I_r || I_c || S_{"auth"}</math>
 Server ->> Database: Request
-Database ->> Server: <math>U_r || U_c</math>
+Database ->> Server: <math>U_r || S_"auth"</math>
+
 
 rnote over Server
-  <math>S_{cs} = "DH"(U_c, P_s)</math>
-end rnote
-
-rnote over Server
-  <math>"Check " \tau</math>
+  <math>"Check " S_"auth"</math>
 end rnote
 
 Server ->> Client: <math>U_r</math>
@@ -44,17 +35,18 @@ rnote over Client
 <math>"Select unlock time " t</math>
 end rnote
 
-rnote over Client
-  <math>\tau = "MAC"_{S_{cs}}(t || (E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data") </math>
-end rnote
 
 
-Client ->> Server: <math>(t ||(E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data") || \tau</math>
+Client ->> Server: <math>I_c || I_r || t || (E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data" || S_"auth"</math>
+
+Server ->> Database: Request
+Database ->> Server: <math>S_"auth"</math>
+
 
 rnote over Server
-  <math>"Check " \tau</math>
+  <math>"Check " S_"auth"</math>
 end rnote
 
 
-Server ->> Database: <math>t || (E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data"</math>
+Server ->> Database: <math>I_c || I_r || t || (E_{S_{cr}}^{k_1}(S_m) || k_1) || \tau_"key" || (E_{S_m}^{k_2}(M) || k_2) || \tau_"data"</math>
 @enduml

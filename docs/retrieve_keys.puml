@@ -4,8 +4,14 @@ participant Client
 participant Server
 database Database
 
+Client ->> Server: <math>I_c</math>
+Server ->> Database: Request
+Database ->> Server: <math>s</math>
+Server ->> Client: <math>s</math>
+
+
 rnote over Client
-  <math>S_"master" = H("pass")</math>
+  <math>S_"master" = H_s("pass")</math>
 end rnote
 rnote over Client
   <math>S_"auth" = "HKDF"(S_"master")</math>
@@ -25,14 +31,11 @@ end rnote
 Server ->> Database: Request
 Database ->> Server: <math>E_{S_"enc"}^k(P_c) || k</math>
 
-Server ->> Client: <math>E_{S_"enc"}^k(P_c) || k || U_s</math>
+Server ->> Client: <math>E_{S_"enc"}^k(P_c) || k</math>
 
 rnote over Client
   <math>P_c = D_{S_"enc"}^k(E_{S_"enc"}^k(P_c))</math>
 end rnote
 
-rnote over Client
-  <math>S_{cs} = DH(P_c, U_s)</math>
-end rnote
 
 @enduml

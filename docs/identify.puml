@@ -10,7 +10,13 @@ rnote over Client
 end rnote
 
 rnote over Client
-  <math>S_"master" = H("pass")</math>
+  <math>"Pick salt " s</math>
+end rnote
+
+
+
+rnote over Client
+  <math>S_"master" = H_s("pass")</math>
 end rnote
 rnote over Client
   <math>S_"auth" = "HKDF"(S_"master")</math>
@@ -20,11 +26,11 @@ rnote over Client
 end rnote
 
 rnote over Client
-  <math>"Pick " k</math>
+  <math>"Pick nonce " k</math>
 end rnote
 
 
-Client ->> Server: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k</math>
+Client ->> Server: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k || s</math>
 
-Server ->> Database: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k</math>
+Server ->> Database: <math>I_c || U_c || S_"auth" || E_{S_"enc"}^k(P_c) || k || s</math>
 @enduml
