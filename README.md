@@ -43,4 +43,5 @@ Then, you can use the CLI to interact with the local server:
 ./tl signup --user jonas
 ./tl logout
 ./tl login --user jonas
+./tl --help
 ```
