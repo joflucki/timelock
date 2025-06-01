@@ -16,7 +16,7 @@ end rnote
 
 
 rnote over Client
-  <math>S_"master" = H_s("pass")</math>
+  <math>S_"master" = H_a("pass")</math>
 end rnote
 rnote over Client
   <math>S_"auth" = "HKDF"(S_"master")</math>
